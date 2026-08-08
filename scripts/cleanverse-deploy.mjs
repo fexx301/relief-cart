@@ -111,13 +111,13 @@ console.log(`DEPLOYER=${admin}`);
 if (mode === "--foundation") {
   const gate = await deploy("contracts/CleanverseComplianceGate.sol:CleanverseComplianceGate", [validator]);
   assert((await callAddress(gate.deployedTo, "validator()(address)")) === validator, "Gate validator mismatch");
+  console.log(`CLEANVERSE_COMPLIANCE_GATE_ADDRESS=${gate.deployedTo}`);
+  console.log(`COMPLIANCE_GATE_DEPLOY_TX=${gate.transactionHash}`);
 
   const factory = await deploy("contracts/RecoveryBenefitFactory.sol:RecoveryBenefitFactory", [validator, admin]);
   assert((await callAddress(factory.deployedTo, "validator()(address)")) === validator, "Factory validator mismatch");
   assert((await callAddress(factory.deployedTo, "owner()(address)")) === admin, "Factory owner mismatch");
 
-  console.log(`CLEANVERSE_COMPLIANCE_GATE_ADDRESS=${gate.deployedTo}`);
-  console.log(`COMPLIANCE_GATE_DEPLOY_TX=${gate.transactionHash}`);
   console.log(`CLEANVERSE_FACTORY_ADDRESS=${factory.deployedTo}`);
   console.log(`FACTORY_DEPLOY_TX=${factory.transactionHash}`);
   console.log("NEXT_STAGE=validator_grant");
