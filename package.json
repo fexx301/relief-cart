@@ -13,7 +13,8 @@
     "cleanverse:validator": "node --env-file=.env scripts/cleanverse-validator.mjs",
     "cleanverse:preflight": "node --env-file=.env scripts/cleanverse-preflight.mjs",
     "cleanverse:deploy": "node --env-file=.env scripts/cleanverse-deploy.mjs",
-    "cleanverse:grant": "node --env-file=.env scripts/cleanverse-grant.mjs"
+    "cleanverse:grant": "node --env-file=.env scripts/cleanverse-grant.mjs",
+    "cleanverse:apass": "node --env-file=.env scripts/cleanverse-apass-preflight.mjs"
   },
   "engines": {
     "node": ">=20"
