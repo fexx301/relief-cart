@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ReliefCart turns a delayed-baggage report into one evidence-backed essential purchase and a claim-ready record." />
+  <meta name="theme-color" content="#eeece5" />
+  <meta name="color-scheme" content="light dark" />
+  <meta property="og:title" content="ReliefCart — policy-aware luggage recovery" />
+  <meta property="og:description" content="Policy before purchase. Proof after checkout." />
+  <title>ReliefCart — policy-aware luggage recovery</title>
+  <script>
+    (() => {
+      const key = "reliefcart-theme";
+      let preference = "system";
+      try {
+        const saved = localStorage.getItem(key);
+        if (["system", "light", "dark"].includes(saved)) preference = saved;
+      } catch {
+        // Keep the system default when storage is unavailable.
+      }
+      const resolved =
+        preference === "system"
+          ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+          : preference;
+      document.documentElement.dataset.theme = resolved;
+      document.documentElement.dataset.themePreference = preference;
+    })();
+  </script>
+  <link rel="icon" type="image/png" href="/assets/reliefcart-logo.png" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to recovery workspace</a>
+
+  <div class="site-shell">
+    <header class="masthead">
+      <a class="brand" href="/" aria-label="ReliefCart home">
+        <span class="brand-mark" aria-hidden="true">
+          <img src="/assets/reliefcart-logo.png" alt="" width="52" height="52" />
+        </span>
+        <span>
+          <strong>ReliefCart</strong>
+          <small>Pre-claim procurement</small>
+        </span>
+      </a>
+
+      <div class="masthead-status">
+        <label class="theme-control" title="Color theme">
+          <span class="visually-hidden">Color theme</span>
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <circle cx="10" cy="10" r="6.5" />
+            <path d="M10 3.5a6.5 6.5 0 0 0 0 13Z" />
+          </svg>
+          <select id="themeSelect" aria-label="Color theme">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </label>
+        <span class="system-status" id="modeBadge">
+          <span class="status-light" aria-hidden="true"></span>
+          Connecting
+        </span>
+        <span class="scope-note">One item · one merchant · one approval</span>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="kicker">Baggage delay recovery desk</p>
+          <h1 id="hero-title">Replace what matters.<br /><em>Keep the proof.</em></h1>
+          <p class="hero-lede">
+            ReliefCart reads the incident, checks the policy, refuses what cannot be justified,
+            and prepares one bounded purchase for approval.
+          </p>
+        </div>
+
+        <aside class="hero-note" aria-label="Recovery promise">
+          <span class="note-index">01</span>
+          <p>Policy shapes the purchase <strong>before</strong> money moves.</p>
+          <ul>
+            <li>No claim reference, no checkout</li>
+            <li>No citation, no eligibility label</li>
+            <li>No exact approval, no order</li>
+          </ul>
+        </aside>
+      </section>
+
+      <ol class="journey" id="journey" aria-label="Recovery progress">
+        <li class="is-active" data-stage="intake">
+          <span>01</span>
+          <div><strong>Incident</strong><small>Establish the case</small></div>
+        </li>
+        <li data-stage="evidence">
+          <span>02</span>
+          <div><strong>Evidence</strong><small>Policy and constraints</small></div>
+        </li>
+        <li data-stage="approval">
+          <span>03</span>
+          <div><strong>Approval</strong><small>Exact-total session</small></div>
+        </li>
+        <li data-stage="record">
+          <span>04</span>
+          <div><strong>Record</strong><small>Order and claim pack</small></div>
+        </li>
+      </ol>
+
+      <section class="workspace" aria-label="ReliefCart recovery workspace">
+        <aside class="intake-panel" id="intakePanel">
+          <form id="intakeForm" novalidate>
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Traveller intake</p>
+                <h2>Start a recovery case</h2>
+              </div>
+              <button id="loadDemo" type="button" class="text-button">
+                Load demo report
+              </button>
+            </div>
+
+            <label class="field">
+              <span class="field-label">Delay notice or PIR report</span>
+              <textarea
+                id="incident"
+                rows="9"
+                minlength="20"
+                required
+                placeholder="Paste the baggage delay notice, including the claim or PIR reference…"
+              ></textarea>
+              <span class="field-help">Synthetic demo data only. A claim reference is required.</span>
+            </label>
+
+            <div class="form-grid two">
+              <label class="field">
+                <span class="field-label">Airline policy corpus</span>
+                <select id="airline" required></select>
+              </label>
+              <label class="field">
+                <span class="field-label">Nights without bag</span>
+                <input id="nights" type="number" value="1" min="1" max="7" required />
+              </label>
+            </div>
+
+            <div class="form-grid three">
+              <label class="field">
+                <span class="field-label">Clothing size</span>
+                <select id="size">
+                  <option>S</option>
+                  <option selected>M</option>
+                  <option>L</option>
+                  <option>XL</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">Urgent need</span>
+                <select id="need">
+                  <option value="clothing" selected>Meeting clothing</option>
+                  <option value="toiletries">Toiletries</option>
+                  <option value="both">Either essential</option>
+                </select>
+              </label>
+              <label class="field">
+                <span class="field-label">Personal cap</span>
+                <span class="input-affix">
+                  <span aria-hidden="true">$</span>
+                  <input id="cap" type="number" value="150" min="1" max="500" required />
+                </span>
+              </label>
+            </div>
+
+            <label class="field">
+              <span class="field-label">What is still with you?</span>
+              <input id="already" type="text" value="phone, laptop, charger" placeholder="phone, medication, charger…" />
+              <span class="field-help">ReliefCart excludes duplicates from the recovery plan.</span>
+            </label>
+
+            <div class="address-note">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z" />
+                <circle cx="12" cy="10" r="2" />
+              </svg>
+              <span>
+                <strong>Demo fulfillment</strong>
+                Local sandbox San Francisco address
+              </span>
+            </div>
+
+            <p class="form-message" id="formMessage" role="alert"></p>
+
+            <button id="planBtn" type="submit" class="button primary-button">
+              <span>Verify incident and build plan</span>
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 6 6-6 6" /></svg>
+            </button>
+          </form>
+        </aside>
+
+        <section class="case-desk" aria-live="polite">
+          <div class="empty-state" id="emptyState">
+            <div class="luggage-illustration" aria-hidden="true">
+              <svg viewBox="0 0 320 260">
+                <path class="case-body" d="M72 66h176a20 20 0 0 1 20 20v124a20 20 0 0 1-20 20H72a20 20 0 0 1-20-20V86a20 20 0 0 1 20-20Z" />
+                <path class="case-handle" d="M125 66V45c0-8 7-15 15-15h40c8 0 15 7 15 15v21" />
+                <path class="case-line" d="M98 66v164M222 66v164" />
+                <circle class="case-wheel" cx="95" cy="238" r="8" />
+                <circle class="case-wheel" cx="225" cy="238" r="8" />
+                <g class="tag">
+                  <path d="m206 92 64 18-20 70-64-18z" />
+                  <circle cx="245" cy="120" r="5" />
+                  <path d="m198 146 41 12M204 132l42 12" />
+                </g>
+              </svg>
+              <span class="illustration-label">SFO · DELAYED</span>
+            </div>
+            <div class="empty-copy">
+              <p class="section-kicker">No active case</p>
+              <h2>Your evidence board will appear here.</h2>
+              <p>
+                Load the synthetic report or paste a baggage notice. ReliefCart separates facts,
+                inferences, missing details, and policy evidence before suggesting a purchase.
+              </p>
+            </div>
+          </div>
+
+          <div class="case-view" id="caseView" hidden>
+            <header class="case-header">
+              <div>
+                <p class="section-kicker">Active recovery case</p>
+                <div class="case-title-row">
+                  <h2 id="caseTitle">Baggage delay</h2>
+                  <span class="case-status" id="caseStatus">Planned</span>
+                </div>
+                <p class="case-subtitle" id="caseSubtitle"></p>
+              </div>
+              <button id="resetBtn" type="button" class="icon-button" aria-label="Start a new recovery case" title="Start a new case">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" /></svg>
+              </button>
+            </header>
+
+            <div class="case-alert" id="caseAlert" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5M12 17h.01M10 3.7 2.8 17a2 2 0 0 0 1.8 3h14.8a2 2 0 0 0 1.8-3L14 3.7a2.3 2.3 0 0 0-4 0Z" /></svg>
+              <span id="caseAlertText"></span>
+            </div>
+
+            <section class="budget-board" aria-labelledby="budget-title">
+              <div class="budget-primary">
+                <p class="section-kicker" id="budget-title">Available recovery budget</p>
+                <strong id="effectiveCap">$0.00</strong>
+                <div class="budget-meter" aria-hidden="true"><span id="budgetMeter"></span></div>
+                <p id="budgetCaption">Lower of policy and personal cap</p>
+              </div>
+              <dl class="budget-stats">
+                <div><dt>Airline policy</dt><dd id="policyCap">$0.00</dd></div>
+                <div><dt>Personal limit</dt><dd id="personalCap">$0.00</dd></div>
+                <div><dt>After purchase</dt><dd id="remainingCap">—</dd></div>
+              </dl>
+            </section>
+
+            <section class="desk-section" aria-labelledby="evidence-title">
+              <div class="section-heading compact">
+                <div>
+                  <p class="section-kicker">Evidence layer</p>
+                  <h2 id="evidence-title">What we can support</h2>
+                </div>
+                <span class="evidence-rule">No citation → no eligible label</span>
+              </div>
+
+              <div class="policy-sources" id="policySources"></div>
+
+              <div class="fact-grid">
+                <article class="fact-column known">
+                  <span class="fact-index">01</span>
+                  <h3>Known facts</h3>
+                  <ul id="knownFacts"></ul>
+                </article>
+                <article class="fact-column inferred">
+                  <span class="fact-index">02</span>
+                  <h3>Inferences</h3>
+                  <ul id="inferences"></ul>
+                </article>
+                <article class="fact-column missing">
+                  <span class="fact-index">03</span>
+                  <h3>Missing or uncertain</h3>
+                  <ul id="missingFacts"></ul>
+                </article>
+              </div>
+            </section>
+
+            <section class="desk-section" aria-labelledby="decision-title">
+              <div class="section-heading compact">
+                <div>
+                  <p class="section-kicker">SpecLock decision</p>
+                  <h2 id="decision-title">One justified replacement</h2>
+                </div>
+                <div class="layer-legend" aria-label="Control layer legend">
+                  <span><i class="dot deterministic"></i>Deterministic</span>
+                  <span><i class="dot inferred"></i>Inferred</span>
+                  <span><i class="dot sandbox"></i>Sandbox
+                  </span>
+                </div>
+              </div>
+              <div id="plan"></div>
+            </section>
+
+            <section class="transaction-panel" aria-labelledby="transaction-title">
+              <div class="transaction-heading">
+                <div>
+                  <p class="section-kicker">Bounded checkout</p>
+                  <h2 id="transaction-title">Quote, approve, place</h2>
+                </div>
+                <span class="transaction-lock">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2M5 10h14v11H5z" /></svg>
+                  Exact total only
+                </span>
+              </div>
+
+              <ol class="transaction-steps" id="transactionSteps">
+                <li data-transaction-stage="quote"><span>1</span><strong>Fresh quote</strong></li>
+                <li data-transaction-stage="session"><span>2</span><strong>Payment session</strong></li>
+                <li data-transaction-stage="approval"><span>3</span><strong>Sandbox approval</strong></li>
+                <li data-transaction-stage="order"><span>4</span><strong>Order ID</strong></li>
+              </ol>
+
+              <div class="payment-summary" id="pay">
+                <p>Select “Request sandbox quote” to calculate shipping, tax, and the exact approval total.</p>
+              </div>
+
+              <div class="transaction-actions">
+                <button id="quoteBtn" type="button" class="button secondary-button" disabled>Request sandbox quote</button>
+                <button id="payBtn" type="button" class="button secondary-button" disabled>Create approval session</button>
+                <a id="approvalLink" class="button secondary-button" target="_blank" rel="noreferrer" hidden>Open secure approval</a>
+                <button id="approveBtn" type="button" class="button quiet-button" disabled hidden>Approve sandbox transaction</button>
+                <button id="declineBtn" type="button" class="button quiet-button danger-text" disabled hidden>Decline</button>
+                <button id="checkoutBtn" type="button" class="button primary-button" disabled>Place approved order</button>
+              </div>
+              <p class="transaction-note" id="transactionNote">
+                A quote does not place an order. Checkout remains locked until approval completes.
+              </p>
+            </section>
+
+            <section class="claim-section" id="claimSection" aria-labelledby="claim-title" hidden>
+              <div class="section-heading compact">
+                <div>
+                  <p class="section-kicker">Recovery record</p>
+                  <h2 id="claim-title">Claim-support packet</h2>
+                </div>
+                <div class="claim-actions">
+                  <button id="downloadBtn" type="button" class="text-button">Download JSON</button>
+                  <button id="printBtn" type="button" class="text-button">Print packet</button>
+                </div>
+              </div>
+              <div id="claim"></div>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        ReliefCart labels purchases as <em>potentially reimbursable</em>. The airline makes the
+        final claim decision. This prototype discloses mock transactions wherever they appear.
+      </p>
+      <span>Policy before purchase · proof after checkout</span>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="/app.js"></script>
+</body>
+</html>

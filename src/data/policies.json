@@ -1,0 +1,174 @@
+{
+  "airlines": [
+    {
+      "id": "united",
+      "name": "United Airlines",
+      "incidentTypes": ["delayed_baggage"],
+      "dailyCapUsd": 150,
+      "notes": "Demo table based on typical delayed-baggage incidental practice. Not legal advice; airline evaluates individual claims.",
+      "sources": [
+        {
+          "id": "ua-delayed-bag",
+          "title": "United delayed baggage — incidental expenses (demo corpus)",
+          "url": "https://www.united.com/en/us/fly/travel/delayed-or-lost-baggage.html",
+          "excerpt": "If your bag is delayed, you may be reimbursed for reasonable incidental expenses such as toiletries and essential clothing until the bag is returned. Keep receipts. Coverage is not guaranteed and is subject to review."
+        },
+        {
+          "id": "dot-baggage",
+          "title": "US DOT — Lost, delayed, or damaged baggage",
+          "url": "https://www.transportation.gov/lost-delayed-or-damaged-baggage",
+          "excerpt": "Airlines may reimburse reasonable, verifiable, and actual incidental expenses caused by a baggage delay. Save all receipts. The airline reviews each claim."
+        }
+      ],
+      "eligibleCategories": [
+        {
+          "id": "toiletries",
+          "label": "Toiletries & personal care",
+          "maxItemUsd": 80,
+          "reimbursableLanguage": "potentially reimbursable as incidental personal care"
+        },
+        {
+          "id": "clothing_essentials",
+          "label": "Essential clothing",
+          "maxItemUsd": 120,
+          "reimbursableLanguage": "potentially reimbursable as essential clothing for the delay period"
+        },
+        {
+          "id": "underwear",
+          "label": "Underwear / basics",
+          "maxItemUsd": 60,
+          "reimbursableLanguage": "potentially reimbursable as essential basics"
+        },
+        {
+          "id": "phone_accessory",
+          "label": "Phone charger / cable",
+          "maxItemUsd": 40,
+          "reimbursableLanguage": "potentially reimbursable if required for work while delayed"
+        }
+      ],
+      "blockedCategories": [
+        {
+          "id": "electronics_luxury",
+          "label": "Luxury electronics / cameras",
+          "reason": "Not treated as delayed-bag essentials under typical incidental policies"
+        },
+        {
+          "id": "jewelry",
+          "label": "Jewelry",
+          "reason": "Not essential for temporary delay; high claim risk"
+        },
+        {
+          "id": "sneakers_fashion",
+          "label": "Fashion sneakers / non-essential footwear",
+          "reason": "Exceeds essentials scope unless no other footwear is available"
+        }
+      ]
+    },
+    {
+      "id": "delta",
+      "name": "Delta Air Lines",
+      "incidentTypes": ["delayed_baggage"],
+      "dailyCapUsd": 125,
+      "notes": "Demo corpus. Caps and categories are simplified for product demo.",
+      "sources": [
+        {
+          "id": "dl-delayed-bag",
+          "title": "Delta delayed baggage (demo corpus)",
+          "url": "https://www.delta.com/us/en/baggage/delayed-or-damaged-baggage",
+          "excerpt": "For delayed bags, Delta may reimburse reasonable expenses for necessary items purchased while waiting for your bag. Submit receipts with your claim."
+        },
+        {
+          "id": "dot-baggage",
+          "title": "US DOT — Lost, delayed, or damaged baggage",
+          "url": "https://www.transportation.gov/lost-delayed-or-damaged-baggage",
+          "excerpt": "Airlines may reimburse reasonable, verifiable, and actual incidental expenses caused by a baggage delay."
+        }
+      ],
+      "eligibleCategories": [
+        {
+          "id": "toiletries",
+          "label": "Toiletries & personal care",
+          "maxItemUsd": 70,
+          "reimbursableLanguage": "potentially reimbursable as incidental personal care"
+        },
+        {
+          "id": "clothing_essentials",
+          "label": "Essential clothing",
+          "maxItemUsd": 100,
+          "reimbursableLanguage": "potentially reimbursable as essential clothing"
+        },
+        {
+          "id": "underwear",
+          "label": "Underwear / basics",
+          "maxItemUsd": 50,
+          "reimbursableLanguage": "potentially reimbursable as essential basics"
+        }
+      ],
+      "blockedCategories": [
+        {
+          "id": "electronics_luxury",
+          "label": "Luxury electronics / cameras",
+          "reason": "Not delayed-bag essentials"
+        },
+        {
+          "id": "jewelry",
+          "label": "Jewelry",
+          "reason": "Not essential for temporary delay"
+        }
+      ]
+    },
+    {
+      "id": "aa",
+      "name": "American Airlines",
+      "incidentTypes": ["delayed_baggage"],
+      "dailyCapUsd": 100,
+      "notes": "Demo corpus with conservative daily cap.",
+      "sources": [
+        {
+          "id": "aa-delayed-bag",
+          "title": "American Airlines delayed baggage (demo corpus)",
+          "url": "https://www.aa.com/i18n/travel-info/baggage/delayed-or-damaged-bags.jsp",
+          "excerpt": "If your bag is delayed, keep receipts for essential purchases. Reimbursement for reasonable incidental expenses may be available subject to airline review."
+        },
+        {
+          "id": "dot-baggage",
+          "title": "US DOT — Lost, delayed, or damaged baggage",
+          "url": "https://www.transportation.gov/lost-delayed-or-damaged-baggage",
+          "excerpt": "Keep documentation of the delay and all receipts for incidental expenses."
+        }
+      ],
+      "eligibleCategories": [
+        {
+          "id": "toiletries",
+          "label": "Toiletries & personal care",
+          "maxItemUsd": 60,
+          "reimbursableLanguage": "potentially reimbursable as incidental personal care"
+        },
+        {
+          "id": "clothing_essentials",
+          "label": "Essential clothing",
+          "maxItemUsd": 90,
+          "reimbursableLanguage": "potentially reimbursable as essential clothing"
+        },
+        {
+          "id": "underwear",
+          "label": "Underwear / basics",
+          "maxItemUsd": 45,
+          "reimbursableLanguage": "potentially reimbursable as essential basics"
+        }
+      ],
+      "blockedCategories": [
+        {
+          "id": "electronics_luxury",
+          "label": "Luxury electronics / cameras",
+          "reason": "Not delayed-bag essentials"
+        },
+        {
+          "id": "jewelry",
+          "label": "Jewelry",
+          "reason": "Not essential for temporary delay"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+PROPERTY IRREGULARITY REPORT (PIR) — DEMO / SYNTHETIC
+Airline: United Airlines
+Flight: UA 1841  SFO ← EWR
+Passenger: Alex Rivera
+PIR / Claim reference: UA-PIR-2026-784421
+Date of report: 2026-08-01
+Station: San Francisco International (SFO)
+Baggage tag: 0168123456
+Status: DELAYED — bag not on carousel; tracing initiated
+Expected delivery: Unknown (within 24–48 hours typical)
+Temporary contact: Hotel Zetta, San Francisco
+Notes: Traveler has a client meeting tomorrow morning. Checked bag contains work clothes, toiletries, and chargers. Carry-on has laptop and wallet only.

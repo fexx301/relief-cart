@@ -1,0 +1,115 @@
+{
+  "merchant": {
+    "id": "demo-essentials",
+    "name": "ReliefCart Demo Merch",
+    "url": "https://demo.reliefcart.local",
+    "country": "US",
+    "note": "Prevalidated demo merchant for the local sandbox checkout."
+  },
+  "products": [
+    {
+      "id": "prod_tee_black",
+      "variantId": "var_tee_black_m",
+      "title": "Essential Crew Tee — Black",
+      "merchant": "demo-essentials",
+      "category": "clothing_essentials",
+      "size": "M",
+      "unitPrice": "38.00",
+      "currency": "USD",
+      "inStock": true,
+      "tags": ["meeting", "clothing", "tee"],
+      "rationale": "Single essential top for a client meeting while bag is delayed."
+    },
+    {
+      "id": "prod_tee_white",
+      "variantId": "var_tee_white_m",
+      "title": "Essential Crew Tee — White",
+      "merchant": "demo-essentials",
+      "category": "clothing_essentials",
+      "size": "M",
+      "unitPrice": "38.00",
+      "currency": "USD",
+      "inStock": true,
+      "tags": ["meeting", "clothing", "tee"],
+      "rationale": "Neutral essential top suitable for business-casual."
+    },
+    {
+      "id": "prod_tee_black_l",
+      "variantId": "var_tee_black_l",
+      "title": "Essential Crew Tee — Black",
+      "merchant": "demo-essentials",
+      "category": "clothing_essentials",
+      "size": "L",
+      "unitPrice": "38.00",
+      "currency": "USD",
+      "inStock": true,
+      "tags": ["meeting", "clothing", "tee"],
+      "rationale": "Single essential top for a client meeting while bag is delayed."
+    },
+    {
+      "id": "prod_care_kit",
+      "variantId": "var_care_kit",
+      "title": "Travel Toiletry Essentials Kit",
+      "merchant": "demo-essentials",
+      "category": "toiletries",
+      "size": null,
+      "unitPrice": "24.00",
+      "currency": "USD",
+      "inStock": true,
+      "tags": ["toiletries", "care"],
+      "rationale": "Personal-care incidentals commonly accepted under delayed-bag policies."
+    },
+    {
+      "id": "prod_underwear",
+      "variantId": "var_underwear_m",
+      "title": "Everyday Briefs 3-Pack",
+      "merchant": "demo-essentials",
+      "category": "underwear",
+      "size": "M",
+      "unitPrice": "28.00",
+      "currency": "USD",
+      "inStock": true,
+      "tags": ["basics", "underwear"],
+      "rationale": "Essential basics for multi-day bag delay."
+    },
+    {
+      "id": "prod_charger",
+      "variantId": "var_usb_c_charger",
+      "title": "USB-C 30W Charger",
+      "merchant": "demo-essentials",
+      "category": "phone_accessory",
+      "size": null,
+      "unitPrice": "29.00",
+      "currency": "USD",
+      "inStock": true,
+      "tags": ["charger", "work"],
+      "rationale": "Work continuity if charger was in checked bag."
+    },
+    {
+      "id": "prod_camera",
+      "variantId": "var_camera_lux",
+      "title": "Mirrorless Camera Body",
+      "merchant": "demo-essentials",
+      "category": "electronics_luxury",
+      "size": null,
+      "unitPrice": "899.00",
+      "currency": "USD",
+      "inStock": true,
+      "tags": ["camera", "luxury", "blocked-demo"],
+      "rationale": "Intentionally in catalog to demonstrate abstention."
+    },
+    {
+      "id": "prod_sneakers",
+      "variantId": "var_sneakers_fashion",
+      "title": "Limited Fashion Sneakers",
+      "merchant": "demo-essentials",
+      "category": "sneakers_fashion",
+      "size": "10",
+      "unitPrice": "160.00",
+      "currency": "USD",
+      "inStock": true,
+      "tags": ["sneakers", "fashion", "blocked-demo"],
+      "rationale": "Intentionally in catalog to demonstrate category block."
+    }
+  ]
+}
