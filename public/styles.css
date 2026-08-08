@@ -426,6 +426,149 @@ svg {
   content: "";
 }
 
+.cleanverse-proof {
+  margin-bottom: 22px;
+  padding: clamp(24px, 3.2vw, 42px);
+  border: 1px solid var(--line);
+  border-radius: 28px 28px 8px 28px;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.proof-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.proof-heading h2 {
+  margin: 7px 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 3vw, 46px);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.network-pill {
+  display: inline-flex;
+  min-height: 34px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+}
+
+.network-pill i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4f7c5d;
+  box-shadow: 0 0 0 4px rgba(79, 124, 93, 0.13);
+}
+
+.proof-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.proof-card {
+  position: relative;
+  min-height: 220px;
+  padding: 22px;
+  background: var(--paper-deep);
+}
+
+.proof-card + .proof-card {
+  border-left: 1px solid var(--line);
+}
+
+.proof-card::before {
+  position: absolute;
+  top: 0;
+  right: 22px;
+  left: 22px;
+  height: 3px;
+  background: var(--forest);
+  content: "";
+}
+
+.proof-card.is-protected::before {
+  background: var(--amber);
+}
+
+.proof-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.proof-card-topline strong {
+  color: #4f6f58;
+}
+
+.proof-card.is-protected .proof-card-topline strong {
+  color: var(--amber);
+}
+
+.proof-card h3 {
+  margin: 34px 0 10px;
+  font-size: 16px;
+  letter-spacing: -0.025em;
+}
+
+.proof-card p {
+  margin: 0 0 20px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.proof-card a,
+.proof-card small {
+  position: absolute;
+  bottom: 21px;
+  left: 22px;
+  color: var(--ink-soft);
+  font-size: 10px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.proof-card a {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.proof-card a:hover {
+  border-color: var(--orange);
+  color: var(--orange-dark);
+}
+
+.proof-footnote {
+  max-width: 1000px;
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
 .journey {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2042,6 +2185,19 @@ html[data-theme="dark"] .hero-note {
   box-shadow: 0 24px 68px rgba(0, 10, 4, 0.38);
 }
 
+html[data-theme="dark"] .cleanverse-proof {
+  background: var(--paper);
+}
+
+html[data-theme="dark"] .network-pill i {
+  background: #7fb08d;
+  box-shadow: 0 0 0 4px rgba(127, 176, 141, 0.14);
+}
+
+html[data-theme="dark"] .proof-card-topline strong {
+  color: #9cc1a7;
+}
+
 html[data-theme="dark"] .journey {
   background: rgba(23, 29, 24, 0.74);
 }
@@ -2243,6 +2399,19 @@ html[data-theme="dark"] .toast {
     grid-template-columns: 1fr;
   }
 
+  .proof-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .proof-card:nth-child(3) {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .proof-card:nth-child(4) {
+    border-top: 1px solid var(--line);
+  }
+
   .intake-panel {
     position: relative;
     top: auto;
@@ -2403,6 +2572,31 @@ html[data-theme="dark"] .toast {
 
   .hero-note {
     padding: 25px;
+  }
+
+  .cleanverse-proof {
+    padding: 24px 18px;
+    border-radius: 20px 20px 8px 20px;
+  }
+
+  .proof-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .proof-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .proof-card,
+  .proof-card:nth-child(3),
+  .proof-card:nth-child(4) {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .proof-card:first-child {
+    border-top: 0;
   }
 
   .journey li {

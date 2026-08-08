@@ -88,6 +88,63 @@
         </aside>
       </section>
 
+      <section class="cleanverse-proof" aria-labelledby="cleanverse-proof-title">
+        <header class="proof-heading">
+          <div>
+            <p class="section-kicker">Live compliance rail</p>
+            <h2 id="cleanverse-proof-title">Cleanverse proof, not promises.</h2>
+          </div>
+          <span class="network-pill"><i aria-hidden="true"></i>Monad UAT · 10143</span>
+        </header>
+
+        <div class="proof-grid">
+          <article class="proof-card is-verified">
+            <div class="proof-card-topline">
+              <span>CVA · issuance</span>
+              <strong>Issued</strong>
+            </div>
+            <h3>ReliefCart CVA minted</h3>
+            <p>A project-controlled mint emitted Transfer from the zero address; supply and recipient balance both increased by exactly one base unit.</p>
+            <a href="https://testnet.monadexplorer.com/tx/0x54150db03d020116120e75ee1f17b69335464bac8087838087113119bc49e3b4" target="_blank" rel="noreferrer">Mint receipt <span aria-hidden="true">↗</span></a>
+          </article>
+
+          <article class="proof-card is-verified">
+            <div class="proof-card-topline">
+              <span>CVI · participants</span>
+              <strong>Verified</strong>
+            </div>
+            <h3>Two active tier-50 A-Passes</h3>
+            <p>The traveller and synthetic merchant both return Cleanverse verification code 4 for the issued CVA.</p>
+            <a href="https://testnet.monadexplorer.com/tx/0xb3704fb8d3e0a09fe41b31024f58ef363111422a462c8af5cdb7bb081c67d073" target="_blank" rel="noreferrer">Merchant issuance <span aria-hidden="true">↗</span></a>
+          </article>
+
+          <article class="proof-card is-verified">
+            <div class="proof-card-topline">
+              <span>CCP · Factory</span>
+              <strong>Authorized</strong>
+            </div>
+            <h3>REGISTER_ROLE proven</h3>
+            <p>The ReliefCart Factory holds the validator role required to register bounded pools.</p>
+            <a href="https://testnet.monadexplorer.com/tx/0xa9d994f293b78181c16e42979cd3e1fb69875a758460845d3a966bca7051a568" target="_blank" rel="noreferrer">Role-grant receipt <span aria-hidden="true">↗</span></a>
+          </article>
+
+          <article class="proof-card is-protected">
+            <div class="proof-card-topline">
+              <span>CCP · preflight</span>
+              <strong>Fail-closed</strong>
+            </div>
+            <h3>Unsafe broadcast refused</h3>
+            <p>The supplied UAT validator lacks the guide’s registerV2 selector, so ReliefCart stopped before spending gas.</p>
+            <a href="https://github.com/fexx301/relief-cart/blob/main/docs/CLEANVERSE_HANDOFF.md" target="_blank" rel="noreferrer">Technical evidence <span aria-hidden="true">↗</span></a>
+          </article>
+        </div>
+
+        <p class="proof-footnote">
+          Deployed adapter, Factory, candidate vault and transaction receipts are recorded publicly.
+          Registration, funding and redemption remain deliberately unclaimed until the UAT ABI is confirmed.
+        </p>
+      </section>
+
       <ol class="journey" id="journey" aria-label="Recovery progress">
         <li class="is-active" data-stage="intake">
           <span>01</span>
