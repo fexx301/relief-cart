@@ -15,7 +15,8 @@
     "cleanverse:deploy": "node --env-file=.env scripts/cleanverse-deploy.mjs",
     "cleanverse:grant": "node --env-file=.env scripts/cleanverse-grant.mjs",
     "cleanverse:apass": "node --env-file=.env scripts/cleanverse-apass-preflight.mjs",
-    "cleanverse:apass:issue": "node --env-file=.env scripts/cleanverse-apass-issue.mjs"
+    "cleanverse:apass:issue": "node --env-file=.env scripts/cleanverse-apass-issue.mjs",
+    "cleanverse:register": "node --env-file=.env scripts/cleanverse-register.mjs"
   },
   "engines": {
     "node": ">=20"
