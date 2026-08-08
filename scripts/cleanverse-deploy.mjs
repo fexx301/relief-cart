@@ -74,8 +74,6 @@ async function deploy(contract, constructorArgs) {
   const command = [
     "create",
     contract,
-    "--constructor-args",
-    ...constructorArgs.map(String),
     "--rpc-url",
     rpcUrl,
     "--keystore",
@@ -84,6 +82,9 @@ async function deploy(contract, constructorArgs) {
     passwordFile,
     "--broadcast",
     "--json",
+    // forge's variadic constructor args must be last or they consume later options.
+    "--constructor-args",
+    ...constructorArgs.map(String),
   ];
   const { stdout } = await execFileAsync("forge", command, { maxBuffer: 4_000_000 });
   const payload = JSON.parse(stdout.trim());
