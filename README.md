@@ -3,13 +3,13 @@
 **Policy-aware lost-luggage recovery agent** for the [Cleanverse Build: Trusted Assets Hackathon](https://cleanverse.com/hackathon).
 
 ```text
-Incident report + airline policy
+Issuer launches + mints a Cleanverse CVA
         ↓
-Deterministic eligibility (SpecLock) + abstention
+CVI verifies traveller, merchant and CVA-holding pool
         ↓
-Quote → sandbox transaction (exact total) → approval
+Incident + policy → deterministic benefit decision
         ↓
-Checkout → order_id → claim-support packet
+One registered vault → one merchant settlement → audit evidence
 ```
 
 Not a personal shopper. **Pre-claim procurement**: the policy shapes the purchase *before* money leaves.
@@ -28,7 +28,13 @@ Open **http://127.0.0.1:4040**
 npm test
 ```
 
-## Demo path (local sandbox)
+## Demo path
+
+Start at the **Live compliance rail**. It links the public Monad UAT receipts for the ReliefCart
+CVA mint, merchant A-Pass, Factory authorization and deployed integration contracts. It also
+shows the fail-closed registration boundary without presenting it as a completed settlement.
+
+Then run the local purchase flow:
 
 1. Click **Load demo report**
 2. **Verify incident and build plan** → policy board + primary item + abstentions
@@ -52,6 +58,10 @@ same preference.
 | Explicit abstention | Luxury & fashion blocked on purpose |
 | Sandbox transaction | Exact-total approval before checkout |
 | Claim pack | Evidence for later reimbursement filing |
+| Cleanverse CVA | Project-issued compliant settlement asset |
+| CVI A-Passes | Identity status for the recovery participants |
+| Recovery Benefit Vault | Fixed beneficiary, merchant, amount, expiry and one-time state |
+| Fail-closed UAT preflight | No broadcast when the supplied validator ABI cannot execute the guide |
 
 Language used in UI: **potentially reimbursable** — never “guaranteed covered.”
 
@@ -81,13 +91,41 @@ src/
 public/                # demo UI
 docs/DEMO_SCRIPT.md
 docs/CLEANVERSE_HANDOFF.md
-- `docs/CLEANVERSE_UAT_EVIDENCE_TEMPLATE.md`
+docs/CLEANVERSE_UAT_EVIDENCE.md
+docs/CLEANVERSE_UAT_EVIDENCE_TEMPLATE.md
 ```
 
-## Cleanverse integration and UAT guardrails
+## Cleanverse integration
 
-The Solidity integration boundary is implemented and locally tested. Public UAT deployment
-evidence is recorded separately and must not be inferred from local mocks:
+ReliefCart uses a standard CVA launched through the Cleanverse API and a separate one-benefit
+vault. The CVA supplies the compliant fungible asset; the vault supplies the business obligation:
+one beneficiary, one merchant, one amount, one expiry and one terminal redemption.
+
+### Verified on Monad UAT
+
+| Milestone | Evidence |
+|---|---|
+| Project-controlled CVA mint | [Status-1 mint receipt with `Transfer(0x0, recipient, 1)`](https://testnet.monadexplorer.com/tx/0x54150db03d020116120e75ee1f17b69335464bac8087838087113119bc49e3b4) |
+| Traveller and merchant CVI | Both have active tier-50 A-Passes and verification code 4; [merchant issuance receipt](https://testnet.monadexplorer.com/tx/0xb3704fb8d3e0a09fe41b31024f58ef363111422a462c8af5cdb7bb081c67d073) |
+| Cleanverse compliance adapter | [Deployment receipt](https://testnet.monadexplorer.com/tx/0x5cd4fc5533880ac6e5b3591f546b0d14634c3f06ef5401d79dd04303fcc4b66c) |
+| Recovery Benefit Factory | [Deployment receipt](https://testnet.monadexplorer.com/tx/0xc1269d09801a6fe116ca62a4cbc2c1dda6c5d2e83631dc110986ca205585c4fe) |
+| Factory `REGISTER_ROLE` | [Grant receipt](https://testnet.monadexplorer.com/tx/0xa9d994f293b78181c16e42979cd3e1fb69875a758460845d3a966bca7051a568) plus live `hasRole == true` |
+| Candidate vault | [Deployment receipt](https://testnet.monadexplorer.com/tx/0xfa1933e73de749c1d8a7151e155c887829f3ae8368356234095803de0dd8d6cf) and constructor readback |
+
+The complete public record is in
+[docs/CLEANVERSE_UAT_EVIDENCE.md](docs/CLEANVERSE_UAT_EVIDENCE.md).
+
+### Fail-closed boundary
+
+The official Factory flow requires `registerV2` followed by `registerApass`. The supplied UAT
+validator implementation lacks the documented `registerV2` selector. ReliefCart detected that
+in the mandatory pre-broadcast simulation and refused to send the transaction. The candidate
+vault is therefore intentionally unregistered, unfunded and inactive; this repo does not claim
+UAT redemption or automatic transfer-hook settlement.
+
+### Implementation and guardrails
+
+The Solidity boundary is implemented and locally tested:
 
 - `contracts/RecoveryBenefitVault.sol` implements the vendor-neutral one-benefit state machine.
 - `contracts/RecoveryBenefitFactory.sol` models the CVI guide's atomic `registerV2` then
@@ -114,6 +152,8 @@ Validator grant and benefit-pool registration are checkpointed separately from d
 script stores signatures or API credentials, and no stage is described as complete until public
 chain reads and receipts support it.
 
+Current test status: **11 application tests + 37 Foundry tests passing**.
+
 ## Commerce boundary
 
 The current commerce layer is intentionally local and sandbox-only. It models exact-total
@@ -123,9 +163,9 @@ work is documented separately in `docs/CLEANVERSE_HANDOFF.md`.
 
 ## Pre-existing vs hackathon
 
-This repo is **new** for ReliefCart (not a rebrand of Runway).
-Runway Cashflow ASP remains a separate product (affordability API). ReliefCart can later call Runway as an optional budget co-pilot; not required for MVP.
+This repo is **new** for ReliefCart. It is not a rebrand or continuation of a previous hackathon
+integration.
 
 ## License
 
-MIT (add LICENSE if you publish).
+MIT
