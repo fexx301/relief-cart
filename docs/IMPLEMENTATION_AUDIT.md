@@ -22,10 +22,12 @@ This audit covers the current local sandbox workflow and the Cleanverse integrat
 | Sandbox order ID | Successful local checkout generates and displays an order ID | Workflow test + browser flow |
 | Claim-support artifact | Printable view and JSON export include citations, uncertainty, totals, controls, and order ID | Browser-verified |
 | Sandbox disclosure | Header, button copy, approval page, README, and docs identify local behavior | Visual audit |
-| Vendor-neutral benefit vault | Fixed parties, amount, expiry, lifecycle, fail-closed compliance and exact token deltas | 22 focused Foundry tests |
-| Offline Factory prototype | Owner-only atomic `registerV2` then `registerApass` sequence against an injected validator | 5 focused Foundry tests |
+| Vendor-neutral benefit vault | Fixed parties, amount, expiry, lifecycle, registration-bound activation, fail-closed compliance and exact token deltas | 24 focused Foundry tests |
+| Cleanverse compliance adapter | Immutable mapping to validator `isRegistered`, `getRulesV2` and `complianceVerify` with restrictive readiness | 6 focused Foundry tests |
+| Factory integration | Owner-only atomic registration, restrictive-rule/readback checks and vault callback | 7 focused Foundry tests |
 | Adversarial token handling | No-return accepted with exact deltas; false, malformed and reentrant transfers roll back | Foundry tests |
-| Read-only UAT preflight | Inspects chain, code, proxy implementation, Factory role, registration, rules and CVA metadata | Script rejects `--execute` |
+| Staged UAT preflight | Asserts foundation, grant, registration, funding and active-state wiring without mutations | Script rejects `--execute` |
+| Guarded UAT deployment | Verifies chain, signer, gas, bytecode and constructor wiring for foundation/vault modes | Requires explicit mode + `--execute` |
 | Redacted UAT evidence schema | Defines public transaction/state evidence without credentials, signatures, PII or raw responses | Documentation |
 
 ## Cleanverse go/no-go gates still required
@@ -33,8 +35,8 @@ This audit covers the current local sandbox workflow and the Cleanverse integrat
 These remain separate from the local commerce sandbox and require Cleanverse deployment
 artifacts, UAT access, and on-chain evidence:
 
-1. **Validator authorization:** confirm the exact bytes-to-sign and registration-role procedure
-   for `/validator/grant`, then prove the deployed Factory holds `REGISTER_ROLE`.
+1. **Validator authorization:** submit the documented Factory-owner grant once using disposable
+   UAT ownership, then prove the deployed Factory holds `REGISTER_ROLE`.
 2. **Pool registration:** prove the Factory's documented `registerV2(vault, rule)` then
    `registerApass(vault, cva, address(0))` sequence on UAT and identify the separate policy deployment.
 3. **Rule replacement:** remove or replace the unrestricted rule before claiming restrictive

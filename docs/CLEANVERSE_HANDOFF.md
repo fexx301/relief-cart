@@ -44,7 +44,7 @@ the documentation and sandbox prove those statements.
 - `src/commerce/client.ts`: local sandbox commerce client used by the legacy checkout UI; no external commerce provider is connected.
 - `public/`: polished light/dark UI, logo asset and mock approval flow.
 - `test/`: workflow and policy tests currently cover the mock flow.
-- No blockchain wallet, chain registry, CVI/CVA client, smart contract, transaction hash or Cleanverse integration exists yet.
+- The repository now includes locally tested vault, Factory and validator-adapter contracts plus guarded UAT deployment and read-only preflight tooling. Public UAT settlement evidence remains pending.
 - Do not read or copy `.env` values into this file or chat.
 
 ## Cleanverse verification gates
@@ -294,3 +294,33 @@ No architecture choice is made by this documentation update. These findings are 
 - Resolved or materially narrowed: current endpoint (`/validator/grant`), Factory usage is permitted, validator address supplied, and `CWRS03` requires a project/third-party-issued CVA rather than a Cleanverse-provided CVA.
 - Still open: exact signer and signed bytes, `REGISTER_ROLE` recipient, Factory and validator role permissions, separate policy address and deployment identity, exact `registerV2`/`registerApass` caller and argument sequence, refund-recipient A-Pass behavior, transfer-hook semantics, and transaction evidence schema.
 - Decision: continue with the vendor-neutral vault and prepare only guarded/read-only integration tooling. Do not add a Cleanverse adapter, send registration mutations, activate a live benefit, or claim end-to-end Cleanverse settlement until the remaining gates are proven on Monad UAT.
+
+### 2026-08-08 — Build-window integration hardening and public history
+
+- Sources: the local Solidity contracts, Foundry suites, guarded Node tooling and the public
+  [ReliefCart repository](https://github.com/fexx301/relief-cart). Date: 2026-08-08. Confidence is
+  high for local contract behavior and Git history; confidence remains unestablished for UAT
+  registration, transfer-hook behavior and settlement until public transactions prove them.
+- The repository was initialized during the official build window. The root commit is explicitly
+  labelled as the pre-hackathon baseline through Aug 7; subsequent Cleanverse adapter,
+  registration-hardening and UAT-tooling changes are separate build-window commits. No history
+  was backdated or squashed.
+- `CleanverseComplianceGate` now maps ReliefCart checks to the documented validator
+  `complianceVerify` call and treats a pool as ready only when it is registered with exactly one
+  nonzero RuleV2 rule.
+- The Factory now rejects an unrestricted rule, atomically calls `registerV2` and
+  `registerApass`, reads back exact registration/rule state, and confirms that transaction into
+  the intended vault. The vault cannot activate from an evidence hash alone: it requires the
+  Factory callback and live restrictive readiness in addition to funding.
+- Foundry result: 37 tests pass across the adapter, Factory, vault and adversarial-token suites.
+  TypeScript type-checking and script syntax checks also pass. These are local proofs only.
+- Guarded deployment now has separate foundation and vault modes, requires external encrypted
+  keystore files plus an explicit `--execute`, verifies chain ID and constructor wiring, and does
+  not persist signatures or credentials. The read-only preflight has explicit `foundation`,
+  `granted`, `registered`, `funded` and `active` assertions.
+- Advisor verdict: **REVISE**, then proceed with a disposable, staged Monad UAT attempt rather
+  than waiting indefinitely. Final compliance claims remain blocked until runtime evidence is
+  captured.
+- Next gate: deploy the compliance adapter and Factory, prove `REGISTER_ROLE`, then deploy and
+  register a success vault using RuleV2 values derived from the actual UAT A-Pass subjects. No
+  UAT deployment or registration transaction is claimed by this finding.

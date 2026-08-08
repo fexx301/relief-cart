@@ -84,17 +84,22 @@ docs/CLEANVERSE_HANDOFF.md
 - `docs/CLEANVERSE_UAT_EVIDENCE_TEMPLATE.md`
 ```
 
-## Offline Cleanverse preparation
+## Cleanverse integration and UAT guardrails
 
-The Solidity integration boundary is deliberately local and non-deployed:
+The Solidity integration boundary is implemented and locally tested. Public UAT deployment
+evidence is recorded separately and must not be inferred from local mocks:
 
 - `contracts/RecoveryBenefitVault.sol` implements the vendor-neutral one-benefit state machine.
 - `contracts/RecoveryBenefitFactory.sol` models the CVI guide's atomic `registerV2` then
   `registerApass` Factory sequence against an injected validator address.
+- `contracts/CleanverseComplianceGate.sol` maps the vault's beneficiary and merchant checks to
+  the documented validator `complianceVerify` call.
 - `contracts/mocks/MockComplianceValidator.sol` and the Foundry tests validate the expected
   ordering and rollback locally; they are not evidence of Cleanverse behavior.
-- `npm run cleanverse:preflight` performs RPC reads only. It requires the public validator,
-  Factory, vault and CVA addresses in `.env`, rejects `--execute`, and never calls a mutation API.
+- `npm run cleanverse:deploy` deploys only after an explicit mode and `--execute`, using the
+  external encrypted admin keystore configured in `.env`.
+- `npm run cleanverse:preflight -- --stage <stage>` performs RPC reads only and fails unless the
+  requested `foundation`, `granted`, `registered`, `funded`, or `active` state is proven.
 
 Run the local checks with:
 
@@ -102,12 +107,12 @@ Run the local checks with:
 npm test
 npm run typecheck
 forge test
-npm run cleanverse:preflight # only after public UAT addresses are configured
+npm run cleanverse:preflight -- --stage foundation
 ```
 
-Live validator grant/registration execution remains intentionally unavailable until the grant
-signature, role recipient, policy deployment, final restrictive RuleV2 state, CVA transfer hook,
-and refund-recipient requirements are proven on UAT.
+Validator grant and benefit-pool registration are checkpointed separately from deployment. No
+script stores signatures or API credentials, and no stage is described as complete until public
+chain reads and receipts support it.
 
 ## Commerce boundary
 
