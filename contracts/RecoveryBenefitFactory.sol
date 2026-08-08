@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {IAPassComplianceValidator} from "./interfaces/IAPassComplianceValidator.sol";
+import {IRegistrationAwarePool} from "./interfaces/IRegistrationAwarePool.sol";
 
 /// @title RecoveryBenefitFactory
 /// @notice Local prototype of the documented Factory-mode registration sequence.
@@ -9,9 +10,14 @@ import {IAPassComplianceValidator} from "./interfaces/IAPassComplianceValidator.
 contract RecoveryBenefitFactory {
     error InvalidAddress();
     error Unauthorized();
+    error UnrestrictedRule();
+    error RegistrationNotConfirmed();
+    error RuleReadbackMismatch();
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-    event BenefitPoolRegistered(address indexed pool, address indexed cva, address indexed feeAddress);
+    event BenefitPoolRegistered(
+        address indexed pool, address indexed cva, address indexed feeAddress, bytes32 ruleHash
+    );
 
     IAPassComplianceValidator public immutable validator;
     address public owner;
@@ -47,10 +53,35 @@ contract RecoveryBenefitFactory {
     ) external onlyOwner {
         if (pool == address(0) || cva == address(0)) revert InvalidAddress();
         if (pool.code.length == 0 || cva.code.length == 0) revert InvalidAddress();
+        if (_isUnrestricted(rule)) revert UnrestrictedRule();
 
         validator.registerV2(pool, rule);
         validator.registerApass(pool, cva, feeAddress);
 
-        emit BenefitPoolRegistered(pool, cva, feeAddress);
+        if (!validator.isRegistered(pool)) revert RegistrationNotConfirmed();
+        IAPassComplianceValidator.RuleV2[] memory rules = validator.getRulesV2(pool);
+        if (rules.length != 1 || !_sameRule(rules[0], rule)) revert RuleReadbackMismatch();
+
+        bytes32 ruleHash = keccak256(
+            abi.encode(rule.allowedGroup, rule.allowedSubGroup, rule.minTier, rule.minSubTier, rule.poolCountryBitmap)
+        );
+        IRegistrationAwarePool(pool).confirmRegistration(cva, ruleHash);
+
+        emit BenefitPoolRegistered(pool, cva, feeAddress, ruleHash);
+    }
+
+    function _isUnrestricted(IAPassComplianceValidator.RuleV2 calldata rule) internal pure returns (bool) {
+        return rule.allowedGroup == bytes2(0) && rule.allowedSubGroup == bytes2(0) && rule.minTier == 0
+            && rule.minSubTier == 0 && rule.poolCountryBitmap == 0;
+    }
+
+    function _sameRule(IAPassComplianceValidator.RuleV2 memory left, IAPassComplianceValidator.RuleV2 calldata right)
+        internal
+        pure
+        returns (bool)
+    {
+        return left.allowedGroup == right.allowedGroup && left.allowedSubGroup == right.allowedSubGroup
+            && left.minTier == right.minTier && left.minSubTier == right.minSubTier
+            && left.poolCountryBitmap == right.poolCountryBitmap;
     }
 }

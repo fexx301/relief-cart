@@ -17,6 +17,16 @@ contract CleanverseComplianceGate is IComplianceGate {
         validator = IAPassComplianceValidator(validator_);
     }
 
+    function isPoolReady(address pool) external view returns (bool) {
+        if (!validator.isRegistered(pool)) return false;
+        IAPassComplianceValidator.RuleV2[] memory rules = validator.getRulesV2(pool);
+        if (rules.length != 1) return false;
+
+        IAPassComplianceValidator.RuleV2 memory rule = rules[0];
+        return rule.allowedGroup != bytes2(0) || rule.allowedSubGroup != bytes2(0) || rule.minTier != 0
+            || rule.minSubTier != 0 || rule.poolCountryBitmap != 0;
+    }
+
     function verifyBeneficiary(address pool, address account) external view returns (bool) {
         return validator.complianceVerify(pool, account);
     }

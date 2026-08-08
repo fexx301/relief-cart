@@ -2,16 +2,27 @@
 pragma solidity ^0.8.24;
 
 import {RecoveryBenefitFactory} from "../contracts/RecoveryBenefitFactory.sol";
+import {RecoveryBenefitVault} from "../contracts/RecoveryBenefitVault.sol";
 import {IAPassComplianceValidator} from "../contracts/interfaces/IAPassComplianceValidator.sol";
 import {MockComplianceValidator} from "../contracts/mocks/MockComplianceValidator.sol";
+import {MockComplianceGate} from "../contracts/mocks/MockComplianceGate.sol";
 import {MockCva} from "../contracts/mocks/MockCva.sol";
+import {IRegistrationAwarePool} from "../contracts/interfaces/IRegistrationAwarePool.sol";
 
 interface FactoryVm {
     function prank(address sender) external;
     function expectRevert(bytes4 selector) external;
 }
 
-contract PoolStub {}
+contract PoolStub is IRegistrationAwarePool {
+    address public confirmedCva;
+    bytes32 public confirmedRuleHash;
+
+    function confirmRegistration(address cva, bytes32 ruleHash) external {
+        confirmedCva = cva;
+        confirmedRuleHash = ruleHash;
+    }
+}
 
 contract RecoveryBenefitFactoryTest {
     FactoryVm internal constant vm = FactoryVm(address(uint160(uint256(keccak256("hevm cheat code")))));
@@ -47,6 +58,8 @@ contract RecoveryBenefitFactoryTest {
         _assertEq(rules[0].allowedGroup, bytes2("RC"));
         _assertEq(rules[0].minTier, 30);
         _assertEq(rules[0].minSubTier, 7);
+        _assertEq(pool.confirmedCva(), address(cva));
+        _assert(pool.confirmedRuleHash() != bytes32(0));
     }
 
     function testRegistrationIsAtomicWhenApassFails() public {
@@ -86,6 +99,35 @@ contract RecoveryBenefitFactoryTest {
         vm.prank(OWNER);
         vm.expectRevert(RecoveryBenefitFactory.InvalidAddress.selector);
         factory.registerBenefitPool(address(pool), OTHER, address(0), _restrictiveRule());
+    }
+
+    function testRejectsUnrestrictedRule() public {
+        IAPassComplianceValidator.RuleV2 memory rule;
+
+        vm.prank(OWNER);
+        vm.expectRevert(RecoveryBenefitFactory.UnrestrictedRule.selector);
+        factory.registerBenefitPool(address(pool), address(cva), address(0), rule);
+    }
+
+    function testRegistersRealVaultAndConfirmsSameAtomicTransaction() public {
+        MockComplianceGate gate = new MockComplianceGate();
+        RecoveryBenefitVault realVault = new RecoveryBenefitVault(
+            address(cva),
+            address(gate),
+            address(0xBEEF),
+            address(0xCAFE),
+            100,
+            uint64(block.timestamp + 1 days),
+            address(0xFEE1),
+            OWNER,
+            address(factory)
+        );
+
+        vm.prank(OWNER);
+        factory.registerBenefitPool(address(realVault), address(cva), address(0), _restrictiveRule());
+
+        _assert(realVault.registrationConfirmed());
+        _assert(realVault.registrationRuleHash() != bytes32(0));
     }
 
     function _restrictiveRule() internal pure returns (IAPassComplianceValidator.RuleV2 memory) {

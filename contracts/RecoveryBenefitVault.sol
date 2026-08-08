@@ -26,6 +26,8 @@ contract RecoveryBenefitVault {
     error Unauthorized();
     error InvalidStatus();
     error InvalidEvidence();
+    error InvalidRegistration();
+    error RegistrationNotReady();
     error Expired();
     error InsufficientBalance(uint256 available, uint256 required);
     error MerchantMismatch();
@@ -38,6 +40,7 @@ contract RecoveryBenefitVault {
     error Reentrancy();
 
     event BenefitCreated(address indexed vault, address indexed cva, uint256 amount, uint64 expiresAt);
+    event BenefitRegistrationConfirmed(address indexed vault, address indexed cva, bytes32 indexed ruleHash);
     event BenefitActivated(address indexed vault, uint256 fundedBalance, bytes32 evidenceHash);
     event BenefitRevoked(address indexed vault);
     event BenefitCancelled(address indexed vault);
@@ -51,9 +54,12 @@ contract RecoveryBenefitVault {
     address public immutable merchant;
     address public immutable refundRecipient;
     address public immutable operator;
+    address public immutable registrationAuthority;
     uint256 public immutable amount;
     uint64 public immutable expiresAt;
     BenefitStatus public status;
+    bool public registrationConfirmed;
+    bytes32 public registrationRuleHash;
 
     bool private _entered;
 
@@ -77,11 +83,12 @@ contract RecoveryBenefitVault {
         uint256 amount_,
         uint64 expiresAt_,
         address refundRecipient_,
-        address operator_
+        address operator_,
+        address registrationAuthority_
     ) {
         if (
             cva_ == address(0) || complianceGate_ == address(0) || beneficiary_ == address(0) || merchant_ == address(0)
-                || refundRecipient_ == address(0) || operator_ == address(0)
+                || refundRecipient_ == address(0) || operator_ == address(0) || registrationAuthority_ == address(0)
         ) revert InvalidAddress();
         if (cva_.code.length == 0) revert InvalidContract(cva_);
         if (complianceGate_.code.length == 0) revert InvalidContract(complianceGate_);
@@ -95,11 +102,23 @@ contract RecoveryBenefitVault {
         merchant = merchant_;
         refundRecipient = refundRecipient_;
         operator = operator_;
+        registrationAuthority = registrationAuthority_;
         amount = amount_;
         expiresAt = expiresAt_;
         status = BenefitStatus.Pending;
 
         emit BenefitCreated(address(this), cva_, amount_, expiresAt_);
+    }
+
+    /// @notice Records the Factory's atomic validator rule and CVA-association transaction.
+    function confirmRegistration(address registeredCva, bytes32 ruleHash) external {
+        if (msg.sender != registrationAuthority) revert Unauthorized();
+        if (status != BenefitStatus.Pending || registrationConfirmed) revert InvalidStatus();
+        if (registeredCva != address(cva) || ruleHash == bytes32(0)) revert InvalidRegistration();
+
+        registrationConfirmed = true;
+        registrationRuleHash = ruleHash;
+        emit BenefitRegistrationConfirmed(address(this), registeredCva, ruleHash);
     }
 
     /// @notice Operator attestation that registration, rules and funding are ready.
@@ -108,6 +127,13 @@ contract RecoveryBenefitVault {
         if (status != BenefitStatus.Pending) revert InvalidStatus();
         if (block.timestamp >= expiresAt) revert Expired();
         if (evidenceHash == bytes32(0)) revert InvalidEvidence();
+        if (!registrationConfirmed) revert RegistrationNotReady();
+
+        try complianceGate.isPoolReady(address(this)) returns (bool ready) {
+            if (!ready) revert RegistrationNotReady();
+        } catch {
+            revert RegistrationNotReady();
+        }
 
         uint256 fundedBalance = _balanceOf(address(this));
         if (fundedBalance < amount) revert InsufficientBalance(fundedBalance, amount);

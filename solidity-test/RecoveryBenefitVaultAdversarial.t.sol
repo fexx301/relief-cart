@@ -33,9 +33,12 @@ contract RecoveryBenefitVaultAdversarialTest {
             AMOUNT,
             uint64(block.timestamp + 1 days),
             REFUND_RECIPIENT,
+            OPERATOR,
             OPERATOR
         );
         token.mint(address(vault), AMOUNT);
+        vm.prank(OPERATOR);
+        vault.confirmRegistration(address(token), keccak256("rule"));
         vm.prank(OPERATOR);
         vault.activate(keccak256("local-adversarial-evidence"));
     }

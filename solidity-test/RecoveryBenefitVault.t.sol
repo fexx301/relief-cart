@@ -221,10 +221,33 @@ contract RecoveryBenefitVaultTest {
         emptyVault.activate(bytes32(0));
 
         vm.prank(OPERATOR);
+        vm.expectRevert(RecoveryBenefitVault.RegistrationNotReady.selector);
+        emptyVault.activate(keccak256("ready"));
+
+        vm.prank(OPERATOR);
+        emptyVault.confirmRegistration(address(token), keccak256("rule"));
+
+        vm.prank(OPERATOR);
         vm.expectRevert(
             abi.encodeWithSelector(RecoveryBenefitVault.InsufficientBalance.selector, uint256(0), BENEFIT_AMOUNT)
         );
         emptyVault.activate(keccak256("ready"));
+    }
+
+    function testActivationRequiresLivePoolReadiness() public {
+        vm.prank(OPERATOR);
+        vault.confirmRegistration(address(token), keccak256("rule"));
+        gate.setPoolReady(false);
+
+        vm.prank(OPERATOR);
+        vm.expectRevert(RecoveryBenefitVault.RegistrationNotReady.selector);
+        vault.activate(keccak256("ready"));
+    }
+
+    function testOnlyRegistrationAuthorityCanConfirmRegistration() public {
+        vm.prank(address(0x9999));
+        vm.expectRevert(RecoveryBenefitVault.Unauthorized.selector);
+        vault.confirmRegistration(address(token), keccak256("rule"));
     }
 
     function testOnlyOperatorCanChangeLifecycle() public {
@@ -242,11 +265,14 @@ contract RecoveryBenefitVaultTest {
             BENEFIT_AMOUNT,
             uint64(block.timestamp + 1 days),
             REFUND_RECIPIENT,
+            OPERATOR,
             OPERATOR
         );
     }
 
     function _activate() internal {
+        vm.prank(OPERATOR);
+        vault.confirmRegistration(address(token), keccak256("rule"));
         vm.prank(OPERATOR);
         vault.activate(keccak256("registration-attestation"));
     }
