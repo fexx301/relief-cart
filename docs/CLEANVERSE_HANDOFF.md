@@ -395,3 +395,18 @@ No architecture choice is made by this documentation update. These findings are 
   signature vector, the supported initial-registration path for this exact validator deployment,
   the API launch/review details that judges should treat as issuance evidence, and the required UAT
   evidence list. The current candidate vault remains frozen and unfunded pending that resolution.
+
+### 2026-08-08 — Project CVA mint receipt recovered from historical state
+
+- Source: read-only historical Monad RPC state and logs for the configured ReliefCart API-launched
+  standard CVA on chain ID 10143. Date: 2026-08-08. Confidence is high: the successful public
+  receipt, event topics, amount, supply and recipient balance agree.
+- Historical balance binary search located the first nonzero recipient balance at block 50901711.
+  The corresponding successful transaction is
+  `0x54150db03d020116120e75ee1f17b69335464bac8087838087113119bc49e3b4`.
+- The receipt contains one CVA `Transfer` event from the zero address for exactly one base unit. The
+  transaction sender is the dedicated project minter used by the earlier grant–mint–revoke proof;
+  current token `totalSupply` and recipient `balanceOf` both remain exactly one base unit.
+- This clears the public evidence gap for a project-controlled standard-CVA issuance event. It does
+  not clear vault registration, CVA pool association, restrictive rule enforcement, funding,
+  activation or settlement; those remain explicitly unclaimed.
