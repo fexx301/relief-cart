@@ -367,3 +367,31 @@ No architecture choice is made by this documentation update. These findings are 
   Request either a corrected/upgraded UAT validator or written confirmation that
   `/validator/register` is the supported compatibility path for this exact proxy. Continue only
   with bounded read-only checks and advisor-reviewed alternatives until that path is established.
+
+### 2026-08-08 — Support confirms signing, CVA pool and A-Pass semantics
+
+- Sources: [Cleanverse documentation portal](https://docs.cleanverse.com/) and a written Cleanverse
+  support response relayed by the project owner on 2026-08-08. Confidence is high for the stated
+  vendor semantics, but the response did not resolve the deployed validator's missing Factory
+  selector or provide a deployment-specific evidence checklist.
+- Support confirmed that the deployed project Factory is submitted to `/validator/grant` and that
+  exact Factory receives `REGISTER_ROLE`.
+- The Factory owner signs the lowercase string concatenation of chain and Factory address with
+  EIP-191 `personal_sign`. The chain value is `monad` on both mainnet and testnet. Wallet libraries
+  perform the personal-sign prefixing and hashing; the project must not pre-hash the message as an
+  extra application step. The provided sample was only illustrative, not a complete redacted test
+  vector with signer and recovered-address output.
+- Support confirmed that a project may launch its own CVA. The previously issued ReliefCart probe
+  is an API-launched standard CVA, so this clarification does not by itself require a second asset
+  deployment.
+- `registerApass(pool, cva, address(0))` registers the pool as the CVA pool and permits that pool to
+  hold and transfer the CVA. On mint, the CVA checks the receiving pool. On refund, the recipient is
+  checked. Every address sending or receiving CVA therefore requires an active A-Pass in this flow.
+- Support identified `POST /validator/set_rule` as the rule-replacement operation. The resulting
+  rules can be read through `POST /validator/rules` or on-chain `getRulesV2(pool)`. This confirms
+  the replacement and proof surfaces, but does not establish initial pool registration when the
+  deployed implementation lacks the guide's `registerV2` entrypoint.
+- Still unresolved: the complete current `/validator/grant` request contract and redacted working
+  signature vector, the supported initial-registration path for this exact validator deployment,
+  the API launch/review details that judges should treat as issuance evidence, and the required UAT
+  evidence list. The current candidate vault remains frozen and unfunded pending that resolution.
