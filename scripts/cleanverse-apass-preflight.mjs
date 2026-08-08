@@ -2,10 +2,13 @@ const baseUrl = requiredEnv("CLEANVERSE_BASE_URL");
 const apiId = requiredEnv("CLEANVERSE_API_ID");
 const chain = requiredEnv("CLEANVERSE_CHAIN").toLowerCase();
 const cva = address("CLEANVERSE_ATOKEN_ADDRESS");
-const subjects = [
-  ["BENEFICIARY", address("CLEANVERSE_TRAVELLER_ADDRESS")],
-  ["MERCHANT", address("CLEANVERSE_VALID_MERCHANT_ADDRESS")],
-];
+const explicitAddress = option("--address");
+const subjects = explicitAddress
+  ? [["SUBJECT", assertAddress("--address", explicitAddress)]]
+  : [
+      ["BENEFICIARY", address("CLEANVERSE_TRAVELLER_ADDRESS")],
+      ["MERCHANT", address("CLEANVERSE_VALID_MERCHANT_ADDRESS")],
+    ];
 
 const parsedBase = new URL(baseUrl);
 if (parsedBase.protocol !== "https:" || parsedBase.hostname !== "uatapi.cleanverse.com") {
@@ -18,10 +21,21 @@ function requiredEnv(name) {
   return value;
 }
 
-function address(name) {
-  const value = requiredEnv(name);
+function option(name) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return undefined;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error(`${name} requires a value`);
+  return value;
+}
+
+function assertAddress(name, value) {
   if (!/^0x[0-9a-fA-F]{40}$/.test(value)) throw new Error(`${name} must be a 20-byte EVM address`);
   return value.toLowerCase();
+}
+
+function address(name) {
+  return assertAddress(name, requiredEnv(name));
 }
 
 function endpoint(path) {
