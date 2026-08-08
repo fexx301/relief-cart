@@ -324,3 +324,46 @@ No architecture choice is made by this documentation update. These findings are 
 - Next gate: deploy the compliance adapter and Factory, prove `REGISTER_ROLE`, then deploy and
   register a success vault using RuleV2 values derived from the actual UAT A-Pass subjects. No
   UAT deployment or registration transaction is claimed by this finding.
+
+### 2026-08-08 — Monad UAT foundation, Factory grant and validator ABI mismatch
+
+- Sources: [Cleanverse documentation portal](https://docs.cleanverse.com/), the locally supplied
+  CCP CVI integration guide, Cleanverse UAT API responses, and read-only Monad RPC calls and
+  traces against chain ID 10143. Date: 2026-08-08. Confidence is high for transaction receipts,
+  role state, deployed bytecode selectors and the failed-call trace; the vendor-supported
+  compatibility path remains unknown.
+- ReliefCart deployed `CleanverseComplianceGate` at
+  `0xff89697eb9ceb2351621210e48857a48f43d8e79` in transaction
+  `0x5cd4fc5533880ac6e5b3591f546b0d14634c3f06ef5401d79dd04303fcc4b66c` and
+  `RecoveryBenefitFactory` at `0x16915850950752fc0cefe100a2a03a9c4419811b` in transaction
+  `0xc1269d09801a6fe116ca62a4cbc2c1dda6c5d2e83631dc110986ca205585c4fe`.
+  Read-only foundation checks verified runtime code, validator wiring and the Factory owner.
+- Encrypted `/validator/grant` succeeded for the deployed Factory in transaction
+  `0xa9d994f293b78181c16e42979cd3e1fb69875a758460845d3a966bca7051a568`
+  at block 52069090. Independent RPC reads prove the Factory holds the validator's on-chain
+  `REGISTER_ROLE`. The replayable EIP-191 signature was neither logged nor persisted.
+- The configured beneficiary has an existing active tier-50 A-Pass. A separate synthetic merchant
+  A-Pass was issued in transaction
+  `0xb3704fb8d3e0a09fe41b31024f58ef363111422a462c8af5cdb7bb081c67d073`;
+  both subjects are active and return documented `verify_apass` code 4 for the issued CVA.
+- A success-vault candidate was deployed at `0xf5bd05f8fb844a524074a57120b12715e2035496`
+  in transaction `0xfa1933e73de749c1d8a7151e155c887829f3ae8368356234095803de0dd8d6cf`.
+  No registration, funding, activation or redemption transaction was sent for this vault.
+- The mandatory pre-broadcast simulation of the documented Factory sequence reverted inside
+  `registerV2`. A local trace shows selector `0xba62f533` reaching the supplied validator proxy and
+  implementation, then immediately reverting with empty data. Simulations with minimum tier 50
+  and 1 fail identically, ruling out the chosen tier as the immediate cause.
+- Bytecode selector extraction from implementation
+  `0x68ce853d660444ffd98d6d5d98ac8ad58241d5a9` proves that `registerV2` selector
+  `0xba62f533` is absent. The deployment does contain the documented selectors for both
+  `registerApass` overloads, `getRulesV2`, `isRegistered`, `complianceVerify` and
+  `removeRuleV2FromContract`, plus legacy rule-management selectors. The on-chain
+  `REGISTER_ROLE()` value matches the granted role, so the failure is not a role-hash mismatch.
+- Visual and text review of the official CVI guide confirms that Factory Mode explicitly requires
+  `registerV2(pool, RuleV2)` followed by `registerApass(pool, cva, fee)`. The supplied UAT
+  deployment therefore does not implement the guide's complete Factory ABI. The API and RPC
+  registration reads both remain false for the vault after the simulation.
+- Decision: do not guess legacy selectors and do not broadcast the incompatible Factory call.
+  Request either a corrected/upgraded UAT validator or written confirmation that
+  `/validator/register` is the supported compatibility path for this exact proxy. Continue only
+  with bounded read-only checks and advisor-reviewed alternatives until that path is established.
