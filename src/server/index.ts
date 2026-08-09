@@ -248,6 +248,14 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
   return res.status(500).json({ error: err instanceof Error ? err.message : "Unexpected error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`ReliefCart http://127.0.0.1:${PORT}  (TRANSACTION_MODE=sandbox)`);
-});
+const isLocalEntrypoint = process.argv[1]
+  ? path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+  : false;
+
+if (isLocalEntrypoint) {
+  app.listen(PORT, () => {
+    console.log(`ReliefCart http://127.0.0.1:${PORT}  (TRANSACTION_MODE=sandbox)`);
+  });
+}
+
+export default app;
