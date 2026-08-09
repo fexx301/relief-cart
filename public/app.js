@@ -169,6 +169,16 @@ function productIcon(category) {
     </svg>`;
 }
 
+function productVisual(product) {
+  if (product.image) {
+    const imageUrl = safeUrl(product.image);
+    if (imageUrl !== "#") {
+      return `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(product.imageAlt || product.title)}" loading="eager" decoding="async" />`;
+    }
+  }
+  return productIcon(product.category);
+}
+
 function showToast(message, type = "success") {
   window.clearTimeout(toastTimer);
   const toast = $("toast");
@@ -350,7 +360,7 @@ function renderPlan(reliefCase) {
   element.innerHTML = `
     <div class="decision-layout">
       <article class="product-card">
-        <div class="product-art">${productIcon(primary.product.category)}</div>
+        <div class="product-art">${productVisual(primary.product)}</div>
         <div class="product-copy">
           <div class="product-topline">
             <span class="decision-badge">Supported</span>

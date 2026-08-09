@@ -1776,6 +1776,14 @@ select:focus {
   stroke-linejoin: round;
 }
 
+.product-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 48%;
+}
+
 .product-copy {
   min-width: 0;
 }

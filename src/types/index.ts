@@ -53,6 +53,8 @@ export interface CatalogProduct {
   inStock: boolean;
   tags: string[];
   rationale: string;
+  image?: string;
+  imageAlt?: string;
 }
 
 export interface ExtractedIncident {
