@@ -57,7 +57,7 @@ describe("ReliefCart policy engine", () => {
   it("does not substitute an unrelated category when the requested size is unavailable", () => {
     const incident = parseIncidentText(demoPir);
     const plan = buildPlan(incident, {
-      size: "S",
+      size: "XXL",
       urgentNeed: "clothing",
       alreadyHas: [],
       personalCapUsd: 150,
