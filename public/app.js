@@ -239,6 +239,21 @@ function renderCaseHeader(reliefCase) {
   $("caseAlertText").textContent = reliefCase.error || "";
 }
 
+function renderUatHandoff(reliefCase) {
+  const stageCopy = {
+    planned: "Policy decision ready",
+    quoted: "Quote ready · approval is next",
+    awaiting_payment: "Approval pending · no order placed",
+    paid: "Approval recorded · checkout unlocked",
+    checked_out: "Sandbox order placed · claim packet ready",
+    aborted: "Purchase blocked · no order placed",
+    failed: "Needs attention · UAT evidence remains separate",
+  };
+  const stage = $("uatHandoffStage");
+  stage.textContent = stageCopy[reliefCase.status] || "UAT pattern available";
+  stage.dataset.state = reliefCase.status;
+}
+
 function renderBudget(reliefCase) {
   const plan = reliefCase.plan;
   if (!plan) return;
@@ -635,6 +650,7 @@ function setCase(reliefCase) {
   }
 
   renderCaseHeader(reliefCase);
+  renderUatHandoff(reliefCase);
   renderBudget(reliefCase);
   renderEvidence(reliefCase);
   renderPlan(reliefCase);

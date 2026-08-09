@@ -100,7 +100,7 @@
         <div class="proof-grid">
           <article class="proof-card is-verified">
             <div class="proof-card-topline">
-              <span>CVA · issuance</span>
+              <span>CVA · asset</span>
               <strong>Issued</strong>
             </div>
             <h3>ReliefCart CVA minted</h3>
@@ -110,7 +110,7 @@
 
           <article class="proof-card is-verified">
             <div class="proof-card-topline">
-              <span>CVI · participants</span>
+              <span>CVI · identity</span>
               <strong>Verified</strong>
             </div>
             <h3>Two active tier-50 A-Passes</h3>
@@ -120,7 +120,7 @@
 
           <article class="proof-card is-verified">
             <div class="proof-card-topline">
-              <span>CCP · Factory</span>
+              <span>CCP · pool</span>
               <strong>Authorized</strong>
             </div>
             <h3>REGISTER_ROLE proven</h3>
@@ -144,6 +144,63 @@
           receipts are verified on Monad UAT. The commerce demo remains synthetic and sandbox-only;
           no production payment claim is made.
         </p>
+
+        <details class="proof-evidence">
+          <summary>
+            <span class="proof-evidence-summary">
+              <span class="section-kicker">Receipt index</span>
+              <strong>Open verified outcomes</strong>
+            </span>
+            <span class="proof-evidence-toggle">7 evidence groups <span aria-hidden="true">⌄</span></span>
+          </summary>
+          <div class="proof-evidence-body">
+            <p>
+              These are reusable Monad UAT receipts for the bounded rail. The GitHub manifest is the
+              canonical record; this panel is its plain-language index. The current browser case
+              remains sandbox-only and does not issue or fund a live benefit.
+            </p>
+            <div class="proof-receipt-grid">
+              <a class="proof-receipt is-success" href="https://testnet.monadexplorer.com/tx/0x2e09397e9bcd1468b9d4369301e5ea77e2389a4e4935158dcbdd2621c986db49" target="_blank" rel="noreferrer">
+                <span class="proof-receipt-status">Status 1 · observed</span>
+                <strong>Merchant settlement</strong>
+                <small>One CVA moved to the verified merchant</small>
+              </a>
+              <a class="proof-receipt is-rejected" href="https://testnet.monadexplorer.com/tx/0x645369564ef12ecfbc8cfd93e0c054f984faede491fd4d43f8419332d779b05e" target="_blank" rel="noreferrer">
+                <span class="proof-receipt-status">Status 0 · rejected</span>
+                <strong>CVA hook guard</strong>
+                <small>Transfer failed without an active recipient A-Pass</small>
+              </a>
+              <a class="proof-receipt is-rejected" href="https://testnet.monadexplorer.com/tx/0x3361ce0b17d3460b36b71e2253c91f1c4cbf8a138d84ec4e40b4c76e132370f3" target="_blank" rel="noreferrer">
+                <span class="proof-receipt-status">Status 0 · rejected</span>
+                <strong>Wrong merchant</strong>
+                <small>Redemption failed outside the fixed merchant scope</small>
+              </a>
+              <a class="proof-receipt is-rejected" href="https://testnet.monadexplorer.com/tx/0x91f70680fc05f56f4a0989eb44bd763ad16e3ca069b3e8b5a4fb68ebef72da59" target="_blank" rel="noreferrer">
+                <span class="proof-receipt-status">Status 0 · rejected</span>
+                <strong>Expired benefit</strong>
+                <small>Redemption failed after the expiry boundary</small>
+              </a>
+              <a class="proof-receipt is-rejected" href="https://testnet.monadexplorer.com/tx/0xaf2dc864c56b7606860911a3c06720112d7a91c85d0f06a47c80877f26fa1e2b" target="_blank" rel="noreferrer">
+                <span class="proof-receipt-status">Status 0 · rejected</span>
+                <strong>Replay protection</strong>
+                <small>Second redemption failed after terminal use</small>
+              </a>
+              <a class="proof-receipt is-rejected" href="https://testnet.monadexplorer.com/tx/0xed2c2bd8daf9924e0502beebf7895983f2bb24c64ae1e6b17fea3346eefe0ed0" target="_blank" rel="noreferrer">
+                <span class="proof-receipt-status">Status 0 · rejected</span>
+                <strong>Revoked benefit</strong>
+                <small>Redemption failed after revocation</small>
+              </a>
+              <a class="proof-receipt is-recovered" href="https://github.com/fexx301/relief-cart/blob/main/docs/CLEANVERSE_UAT_EVIDENCE.md" target="_blank" rel="noreferrer">
+                <span class="proof-receipt-status">Status 1 · recovered</span>
+                <strong>Refunds</strong>
+                <small>Revocation and expiry each recovered one CVA</small>
+              </a>
+            </div>
+            <a class="proof-manifest-link" href="https://github.com/fexx301/relief-cart/blob/main/docs/CLEANVERSE_UAT_EVIDENCE.md" target="_blank" rel="noreferrer">
+              Open the complete evidence manifest <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </details>
       </section>
 
       <ol class="journey" id="journey" aria-label="Recovery progress">
@@ -300,6 +357,44 @@
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5M12 17h.01M10 3.7 2.8 17a2 2 0 0 0 1.8 3h14.8a2 2 0 0 0 1.8-3L14 3.7a2.3 2.3 0 0 0-4 0Z" /></svg>
               <span id="caseAlertText"></span>
             </div>
+
+            <aside class="uat-handoff" aria-labelledby="uat-handoff-title">
+              <div class="uat-handoff-heading">
+                <div>
+                  <p class="section-kicker">UAT verification handoff</p>
+                  <h2 id="uat-handoff-title">Verified pattern, sandbox case</h2>
+                </div>
+                <span class="uat-handoff-badge"><i aria-hidden="true"></i>Evidence available</span>
+              </div>
+              <p class="uat-handoff-copy">
+                This browser session is synthetic and does not issue a live benefit. The public
+                Monad UAT receipts prove the reusable asset, identity, settlement, rejection and
+                refund pattern behind this workflow.
+              </p>
+              <div class="uat-handoff-grid">
+                <div>
+                  <span>Asset</span>
+                  <strong>1 CVA</strong>
+                  <small>compliant unit</small>
+                </div>
+                <div>
+                  <span>Identity</span>
+                  <strong>A-Pass</strong>
+                  <small>traveller + merchant</small>
+                </div>
+                <div>
+                  <span>Outcome</span>
+                  <strong>One use</strong>
+                  <small>settle or refund</small>
+                </div>
+              </div>
+              <div class="uat-handoff-footer">
+                <span id="uatHandoffStage" aria-live="polite">Policy decision ready</span>
+                <a href="https://github.com/fexx301/relief-cart/blob/main/docs/CLEANVERSE_UAT_EVIDENCE.md" target="_blank" rel="noreferrer">
+                  View UAT receipts <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            </aside>
 
             <section class="budget-board" aria-labelledby="budget-title">
               <div class="budget-primary">
