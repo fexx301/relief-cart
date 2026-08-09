@@ -42,6 +42,23 @@ describe("ReliefCart policy engine", () => {
     assert.ok(plan.abstentions.some((a) => /camera|sneaker/i.test(a.title)));
   });
 
+  it("keeps the crewneck recommendation available across selectable sizes", () => {
+    const incident = parseIncidentText(demoPir);
+
+    for (const size of ["S", "M", "L", "XL"]) {
+      const plan = buildPlan(incident, {
+        size,
+        urgentNeed: "clothing",
+        alreadyHas: ["charger"],
+        personalCapUsd: 150,
+        nights: 1,
+      });
+
+      assert.equal(plan.primary?.product.title, "Essential Crewneck — Navy");
+      assert.equal(plan.primary?.product.image, "/assets/crewneck.webp");
+    }
+  });
+
   it("rejects over personal cap", () => {
     const incident = parseIncidentText(demoPir);
     const plan = buildPlan(incident, {
