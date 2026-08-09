@@ -33,8 +33,9 @@ npm test
 ## Demo path
 
 Start at the **Live compliance rail**. It links the public Monad UAT receipts for the ReliefCart
-CVA mint, merchant A-Pass, Factory authorization and deployed integration contracts. It also
-shows the fail-closed registration boundary without presenting it as a completed settlement.
+CVA mint, participant A-Passes, Factory authorization, atomic pool registration, funding,
+activation and merchant redemption. It also shows the remaining UAT-only boundary without
+presenting it as a production payment rail.
 
 Then run the purchase flow on the [production demo](https://relief-cart.vercel.app) or locally:
 
@@ -63,7 +64,7 @@ same preference.
 | Cleanverse CVA | Project-issued compliant settlement asset |
 | CVI A-Passes | Identity status for the recovery participants |
 | Recovery Benefit Vault | Fixed beneficiary, merchant, amount, expiry and one-time state |
-| Fail-closed UAT preflight | No broadcast when the supplied validator ABI cannot execute the guide |
+| Fail-closed UAT preflight | No broadcast until the corrected validator ABI, rule and live state read back |
 
 Language used in UI: **potentially reimbursable** — never “guaranteed covered.”
 
@@ -107,23 +108,25 @@ one beneficiary, one merchant, one amount, one expiry and one terminal redemptio
 | Milestone | Evidence |
 |---|---|
 | Project-controlled CVA mint | [Status-1 mint receipt with `Transfer(0x0, recipient, 1)`](https://testnet.monadexplorer.com/tx/0x54150db03d020116120e75ee1f17b69335464bac8087838087113119bc49e3b4) |
-| Traveller and merchant CVI | Both have active tier-50 A-Passes and verification code 4; [merchant issuance receipt](https://testnet.monadexplorer.com/tx/0xb3704fb8d3e0a09fe41b31024f58ef363111422a462c8af5cdb7bb081c67d073) |
-| Cleanverse compliance adapter | [Deployment receipt](https://testnet.monadexplorer.com/tx/0x5cd4fc5533880ac6e5b3591f546b0d14634c3f06ef5401d79dd04303fcc4b66c) |
-| Recovery Benefit Factory | [Deployment receipt](https://testnet.monadexplorer.com/tx/0xc1269d09801a6fe116ca62a4cbc2c1dda6c5d2e83631dc110986ca205585c4fe) |
-| Factory `REGISTER_ROLE` | [Grant receipt](https://testnet.monadexplorer.com/tx/0xa9d994f293b78181c16e42979cd3e1fb69875a758460845d3a966bca7051a568) plus live `hasRole == true` |
-| Candidate vault | [Deployment receipt](https://testnet.monadexplorer.com/tx/0xfa1933e73de749c1d8a7151e155c887829f3ae8368356234095803de0dd8d6cf) and constructor readback |
+| Traveller and merchant CVI | Both have active tier-50 A-Passes and verification code 4; [merchant issuance receipt](https://testnet.monadexplorer.com/tx/0xb3704fb8d3e0a09fe41b31024f58ef363111422a462c8af5cdb7bb081c67d073) and [beneficiary renewal receipt](https://testnet.monadexplorer.com/tx/0xa952fcbd1818edb3f081510c00a6871dd62f3c0c3d05ab4bf654435fd2ade1c3) |
+| Cleanverse compliance gate | [Deployment receipt](https://testnet.monadexplorer.com/tx/0x137d57504cb6de73ea9ca2e6971912f180f092eb69025ac906b9e812f30f3254) |
+| Recovery Benefit Factory | [Deployment receipt](https://testnet.monadexplorer.com/tx/0x99395c320e7410768aca3056baebc84be00f43ed719ae90cd7f5cbf230e5a24e) |
+| Factory `REGISTER_ROLE` | [Grant receipt](https://testnet.monadexplorer.com/tx/0xbc5248d9b6ff43ae2078be3ddb01c3b5031ec6e9062a0da431a5944004120eb0) plus live `hasRole == true` |
+| Registered vault | [Deployment receipt](https://testnet.monadexplorer.com/tx/0xbcb2efdb7c9e3f9ee6c0ed07b8b55f54f1de5309fd44ecf704a14ee5e13d34a1) and constructor readback |
+| Atomic pool registration | [Registration receipt](https://testnet.monadexplorer.com/tx/0xee4056ea83875c9048490aed344803c811e8092bed1ca42ffef681b94dfa911a); corrected six-field RuleV2, CVA association and vault confirmation |
+| Funding, activation and redemption | [Funding](https://testnet.monadexplorer.com/tx/0x6f07e9c65fd17126d6a4fab7cdcca961a323a28d9c7a1e295c8ebfea14a4c4de) → [activation](https://testnet.monadexplorer.com/tx/0x64376e1aff996abb2e0fe80ab53101b6f5ca385e02308a75f134d358fad87a8f) → [merchant settlement](https://testnet.monadexplorer.com/tx/0x2e09397e9bcd1468b9d4369301e5ea77e2389a4e4935158dcbdd2621c986db49) |
 
 The complete public record is in
 [docs/CLEANVERSE_UAT_EVIDENCE.md](docs/CLEANVERSE_UAT_EVIDENCE.md).
 
-### Fail-closed boundary
+### Corrected and verified UAT boundary
 
-The official Factory flow requires `registerV2` followed by `registerApass`. The supplied UAT
-validator was initially tested with an incomplete five-field RuleV2 ABI. Cleanverse has now
-provided the complete six-field schema, and the corrected `registerV2` selector is present in the
-validator implementation. ReliefCart is re-running the mandatory read-only simulation with the
-corrected encoding; no registration transaction has been sent. The candidate vault remains
-unregistered, unfunded and inactive until that simulation and all readbacks pass.
+The official Factory flow requires `registerV2` followed by `registerApass`. The first preflight
+used an incomplete five-field RuleV2 ABI; Cleanverse supplied the complete six-field schema, and
+the corrected `registerV2` selector `0x7b6c63cb` is present in the validator implementation.
+ReliefCart then simulated and broadcast the corrected Factory call. The registration receipt
+proves `registerV2`, `registerApass`, the exact restrictive rule readback and vault confirmation.
+The subsequent funding, activation and redemption receipts prove the live settlement slice.
 
 ### Implementation and guardrails
 
@@ -142,8 +145,11 @@ The Solidity boundary is implemented and locally tested:
   ordering and rollback locally; they are not evidence of Cleanverse behavior.
 - `npm run cleanverse:deploy` deploys only after an explicit mode and `--execute`, using the
   external encrypted admin keystore configured in `.env`.
-- `npm run cleanverse:preflight -- --stage <stage>` performs RPC reads only and fails unless the
-  requested `foundation`, `granted`, `registered`, `funded`, or `active` state is proven.
+- `npm run cleanverse:preflight -- --stage <stage>` performs RPC/API reads only and fails unless
+  the requested `foundation`, `granted`, `registered`, `funded`, `active`, or `redeemed` state is
+  proven.
+- `npm run cleanverse:activate -- --execute` and `npm run cleanverse:redeem -- --execute` guard,
+  simulate, broadcast and receipt-check the two lifecycle transitions.
 
 Run the local checks with:
 
@@ -156,7 +162,8 @@ npm run cleanverse:preflight -- --stage foundation
 
 Validator grant and benefit-pool registration are checkpointed separately from deployment. No
 script stores signatures or API credentials, and no stage is described as complete until public
-chain reads and receipts support it.
+chain reads and receipts support it. UAT evidence, including the exact final state, is in
+[docs/CLEANVERSE_UAT_EVIDENCE.md](docs/CLEANVERSE_UAT_EVIDENCE.md).
 
 Current test status: **11 application tests + 48 Foundry tests passing**.
 

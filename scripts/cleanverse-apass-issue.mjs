@@ -8,8 +8,14 @@ const baseUrl = requiredEnv("CLEANVERSE_BASE_URL");
 const apiId = requiredEnv("CLEANVERSE_API_ID");
 const apiKey = Buffer.from(requiredEnv("CLEANVERSE_API_KEY"), "base64");
 const chain = requiredEnv("CLEANVERSE_CHAIN").toLowerCase();
-const merchant = address("CLEANVERSE_VALID_MERCHANT_ADDRESS");
 const cva = address("CLEANVERSE_ATOKEN_ADDRESS");
+const subjectType = option("--subject") ?? "merchant";
+const subjectConfig = {
+  merchant: { env: "CLEANVERSE_VALID_MERCHANT_ADDRESS", label: "MERCHANT" },
+  beneficiary: { env: "CLEANVERSE_TRAVELLER_ADDRESS", label: "BENEFICIARY" },
+}[subjectType];
+if (!subjectConfig) throw new Error("--subject must be merchant or beneficiary");
+const subject = address(subjectConfig.env);
 
 if (![16, 24, 32].includes(apiKey.length)) {
   throw new Error("CLEANVERSE_API_KEY did not decode to a valid AES key length");
@@ -23,6 +29,14 @@ if (chain !== "monad") throw new Error("A-Pass issuance is restricted to CLEANVE
 function requiredEnv(name) {
   const value = process.env[name];
   if (!value) throw new Error(`Missing ${name}`);
+  return value;
+}
+
+function option(name) {
+  const index = process.argv.indexOf(name);
+  if (index === -1) return undefined;
+  const value = process.argv[index + 1];
+  if (!value || value.startsWith("--")) throw new Error(`${name} requires a value`);
   return value;
 }
 
@@ -93,21 +107,28 @@ function sleep(ms) {
 }
 
 async function query() {
-  return post("/query_apass", { chain, address: merchant });
+  return post("/query_apass", { chain, address: subject });
 }
 
 const existing = await query();
-if (String(existing.code) === "0000") {
+const existingStatus = Number(findValue(existing.payload, ["status"]));
+const existingExpiration = Number(findValue(existing.payload, ["expirationTime", "expiration_time"]));
+const alreadyActive =
+  String(existing.code) === "0000" &&
+  existingStatus === 1 &&
+  Number.isFinite(existingExpiration) &&
+  existingExpiration > Date.now() / 1000;
+if (alreadyActive) {
   console.log("APASS_ISSUE_RESULT=ALREADY_EXISTS");
 } else {
   const expirationTime = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
-  const customerId = `RELIEFCARTMERCHANT${Date.now()}`;
+  const customerId = `RELIEFCART${subjectConfig.label}${Date.now()}`;
   const issued = await post(
     "/generate_apass",
     {
       customerId,
       expirationTime,
-      wallet: { address: merchant, chain },
+      wallet: { address: subject, chain },
     },
     true
   );
@@ -118,7 +139,7 @@ if (String(existing.code) === "0000") {
   } else {
     console.log("APASS_ISSUANCE_TX=UNAVAILABLE_FROM_BOUNDED_RESPONSE");
   }
-  console.log(`REQUEST_SUMMARY_SHA256=${crypto.createHash("sha256").update(`${chain}:${merchant}`).digest("hex")}`);
+  console.log(`REQUEST_SUMMARY_SHA256=${crypto.createHash("sha256").update(`${chain}:${subject}`).digest("hex")}`);
 }
 
 let active;
@@ -135,18 +156,18 @@ for (let attempt = 0; attempt < 30; attempt += 1) {
   }
   await sleep(3_000);
 }
-if (!active) throw new Error("Merchant A-Pass did not become active within 90 seconds");
+if (!active) throw new Error(`${subjectConfig.label} A-Pass did not become active within 90 seconds`);
 
-const verification = await post("/verify_apass", { chain, atoken: cva, address: merchant });
+const verification = await post("/verify_apass", { chain, atoken: cva, address: subject });
 requireSuccess("verify_apass", verification);
 const verificationData =
   verification.payload?.data && typeof verification.payload.data === "object" ? verification.payload.data : undefined;
 const verificationCode = Number(findValue(verificationData, ["code"]));
-if (verificationCode !== 4) throw new Error(`Merchant verify_apass returned code ${verificationCode}`);
+if (verificationCode !== 4) throw new Error(`${subjectConfig.label} verify_apass returned code ${verificationCode}`);
 
-console.log(`MERCHANT_ADDRESS=${merchant}`);
-console.log(`MERCHANT_APASS_STATUS=${active.status}`);
-console.log(`MERCHANT_APASS_EXPIRES_AT=${active.expirationTime}`);
-console.log(`MERCHANT_TIER=${active.tier}`);
-console.log(`MERCHANT_VERIFY_APASS_CODE=${verificationCode}`);
+console.log(`${subjectConfig.label}_ADDRESS=${subject}`);
+console.log(`${subjectConfig.label}_APASS_STATUS=${active.status}`);
+console.log(`${subjectConfig.label}_APASS_EXPIRES_AT=${active.expirationTime}`);
+console.log(`${subjectConfig.label}_TIER=${active.tier}`);
+console.log(`${subjectConfig.label}_VERIFY_APASS_CODE=${verificationCode}`);
 console.log("APASS_ISSUE_RESULT=PASS");

@@ -8,7 +8,7 @@ if (process.argv.includes("--execute")) {
 }
 
 const stage = option("--stage") ?? "foundation";
-const stages = ["foundation", "granted", "registered", "funded", "active"];
+const stages = ["foundation", "granted", "registered", "funded", "active", "redeemed"];
 const stageIndex = stages.indexOf(stage);
 if (stageIndex === -1) throw new Error(`Unsupported --stage: ${stage}`);
 
@@ -22,9 +22,15 @@ const baseRequired = [
 ];
 const vaultRequired = ["CLEANVERSE_VAULT_ADDRESS"];
 for (const name of stageIndex >= 2 ? [...baseRequired, ...vaultRequired] : baseRequired) requiredEnv(name);
+if (stageIndex >= 3) {
+  for (const name of ["CLEANVERSE_BASE_URL", "CLEANVERSE_API_ID", "CLEANVERSE_CHAIN"]) requiredEnv(name);
+}
 
 const rpcUrl = requiredEnv("MONAD_RPC_URL");
 const expectedChainId = BigInt(requiredEnv("MONAD_CHAIN_ID"));
+const cleanverseBaseUrl = stageIndex >= 3 ? requiredEnv("CLEANVERSE_BASE_URL") : undefined;
+const cleanverseApiId = stageIndex >= 3 ? requiredEnv("CLEANVERSE_API_ID") : undefined;
+const cleanverseChain = stageIndex >= 3 ? requiredEnv("CLEANVERSE_CHAIN") : undefined;
 const validator = address("CLEANVERSE_VALIDATOR_ADDRESS");
 const gate = address("CLEANVERSE_COMPLIANCE_GATE_ADDRESS");
 const factory = address("CLEANVERSE_FACTORY_ADDRESS");
@@ -139,6 +145,21 @@ async function rpc(method, params) {
   const payload = await response.json();
   if (payload.error) throw new Error(`${method} failed: ${payload.error.message}`);
   return payload.result;
+}
+
+async function cleanverseRequest(path, body) {
+  const base = cleanverseBaseUrl.endsWith("/") ? cleanverseBaseUrl : `${cleanverseBaseUrl}/`;
+  const response = await fetch(new URL(path.replace(/^\/+/, ""), base), {
+    method: "POST",
+    headers: { "content-type": "application/json", "api-id": cleanverseApiId },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(15_000),
+  });
+  const payload = await response.json();
+  if (response.status < 200 || response.status >= 300 || String(payload.code) !== "0000") {
+    throw new Error(`${path} failed: HTTP ${response.status}, code ${payload.code}`);
+  }
+  return payload.data;
 }
 
 async function selector(signature) {
@@ -279,13 +300,21 @@ if (stageIndex >= 2) {
   assert(gateReady, "Compliance gate reports the vault is not ready");
 }
 
-if (stageIndex >= 3) {
+if (stageIndex >= 3 && stageIndex <= 4) {
   const amount = uintResult(await call(vault, "amount()", "", "VAULT_AMOUNT"), "VAULT_AMOUNT");
   const balance = uintResult(
     await call(cva, "balanceOf(address)", addressWord(vault), "VAULT_CVA_BALANCE"),
     "VAULT_CVA_BALANCE"
   );
-  const paused = boolResult(await call(cva, "paused()", "", "CVA_PAUSED"), "CVA_PAUSED");
+  // The deployed CVA exposes pause state through Cleanverse's documented API,
+  // not as an on-chain paused() getter. Keep the preflight aligned with that
+  // actual deployment surface instead of assuming an optional ERC-20 method.
+  const pauseData = await cleanverseRequest("/atoken/is_paused", {
+    chain: cleanverseChain,
+    atoken_address: cva,
+  });
+  const paused = pauseData?.paused;
+  if (typeof paused !== "boolean") throw new Error("/atoken/is_paused returned a malformed paused value");
   console.log(`VAULT_AMOUNT=${amount}`);
   console.log(`VAULT_CVA_BALANCE=${balance}`);
   console.log(`CVA_PAUSED=${paused}`);
@@ -321,9 +350,29 @@ if (stageIndex >= 4) {
   console.log(`VAULT_STATUS=${status}`);
   console.log(`BENEFICIARY_COMPLIANCE=${beneficiaryAllowed}`);
   console.log(`MERCHANT_COMPLIANCE=${merchantAllowed}`);
-  assert(status === 1n, `Vault status ${status} is not Active`);
+  const expectedStatus = stage === "redeemed" ? 4n : 1n;
+  const expectedLabel = stage === "redeemed" ? "Redeemed" : "Active";
+  assert(status === expectedStatus, `Vault status ${status} is not ${expectedLabel}`);
   assert(beneficiaryAllowed, "Beneficiary failed live complianceVerify");
   assert(merchantAllowed, "Merchant failed live complianceVerify");
+}
+
+if (stage === "redeemed") {
+  const amount = uintResult(await call(vault, "amount()", "", "VAULT_AMOUNT"), "VAULT_AMOUNT");
+  const vaultBalance = uintResult(
+    await call(cva, "balanceOf(address)", addressWord(vault), "VAULT_CVA_BALANCE"),
+    "VAULT_CVA_BALANCE"
+  );
+  const merchant = addressResult(await call(vault, "merchant()", "", "VAULT_MERCHANT"), "VAULT_MERCHANT");
+  const merchantBalance = uintResult(
+    await call(cva, "balanceOf(address)", addressWord(merchant), "MERCHANT_CVA_BALANCE"),
+    "MERCHANT_CVA_BALANCE"
+  );
+  console.log(`VAULT_AMOUNT=${amount}`);
+  console.log(`VAULT_CVA_BALANCE=${vaultBalance}`);
+  console.log(`MERCHANT_CVA_BALANCE=${merchantBalance}`);
+  assert(vaultBalance === 0n, `Redeemed vault balance ${vaultBalance} is not zero`);
+  assert(merchantBalance >= amount, `Merchant balance ${merchantBalance} is below amount ${amount}`);
 }
 
 console.log("READ_ONLY_PREFLIGHT=PASS");

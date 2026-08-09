@@ -125,23 +125,23 @@
             </div>
             <h3>REGISTER_ROLE proven</h3>
             <p>The ReliefCart Factory holds the validator role required to register bounded pools.</p>
-            <a href="https://testnet.monadexplorer.com/tx/0xa9d994f293b78181c16e42979cd3e1fb69875a758460845d3a966bca7051a568" target="_blank" rel="noreferrer">Role-grant receipt <span aria-hidden="true">↗</span></a>
+            <a href="https://testnet.monadexplorer.com/tx/0xbc5248d9b6ff43ae2078be3ddb01c3b5031ec6e9062a0da431a5944004120eb0" target="_blank" rel="noreferrer">Role-grant receipt <span aria-hidden="true">↗</span></a>
           </article>
 
           <article class="proof-card is-protected">
             <div class="proof-card-topline">
-              <span>CCP · preflight</span>
-              <strong>Fail-closed</strong>
+              <span>CCP · settlement</span>
+              <strong>Redeemed</strong>
             </div>
-            <h3>Unsafe broadcast refused</h3>
-            <p>The first preflight used an incomplete RuleV2 ABI. The corrected six-field encoding is being simulated before any registration gas is spent.</p>
-            <a href="https://github.com/fexx301/relief-cart/blob/main/docs/CLEANVERSE_HANDOFF.md" target="_blank" rel="noreferrer">Technical evidence <span aria-hidden="true">↗</span></a>
+            <h3>One vault, one settlement</h3>
+            <p>The corrected six-field RuleV2 registered the pool, funded one benefit, and redeemed one CVA to the verified merchant.</p>
+            <a href="https://testnet.monadexplorer.com/tx/0x2e09397e9bcd1468b9d4369301e5ea77e2389a4e4935158dcbdd2621c986db49" target="_blank" rel="noreferrer">Settlement receipt <span aria-hidden="true">↗</span></a>
           </article>
         </div>
 
         <p class="proof-footnote">
-          Deployed adapter, Factory, candidate vault and transaction receipts are recorded publicly.
-          Registration, funding and redemption remain deliberately unclaimed until the UAT ABI is confirmed.
+          Pool registration, funding, activation and one-time redemption are verified on Monad UAT.
+          The commerce demo remains synthetic and sandbox-only; no production payment claim is made.
         </p>
       </section>
 
