@@ -70,9 +70,10 @@ candidate vault remains unfunded and inactive.
 
 ## Locally tested
 
-Foundry: **37 passing tests** across the adapter, Factory, vault lifecycle, replay protection,
+Foundry: **48 passing tests** across the adapter, Factory, vault lifecycle, replay protection,
 expiry, revocation, wrong merchant, failed CVI, exact token deltas, malformed tokens and
-reentrancy. Application: **11 passing tests** for policy eligibility, abstention, quote validity,
+reentrancy, plus the undeployed single-contract fallback's atomic association and adversarial
+rule-transition checks. Application: **11 passing tests** for policy eligibility, abstention, quote validity,
 approval, checkout idempotency and claim-pack evidence.
 
 ## Claims deliberately not made

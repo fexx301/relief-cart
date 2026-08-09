@@ -132,6 +132,10 @@ The Solidity boundary is implemented and locally tested:
   `registerApass` Factory sequence against an injected validator address.
 - `contracts/CleanverseComplianceGate.sol` maps the vault's beneficiary and merchant checks to
   the documented validator `complianceVerify` call.
+- `contracts/SingleContractRecoveryBenefitVault.sol` and `contracts/CvaAssociationCoordinator.sol`
+  provide an undeployed, vendor-gated fallback with atomic CVA association and exact rule-transition
+  readback. They must not be deployed until Cleanverse confirms the API registration path and the
+  coordinator role.
 - `contracts/mocks/MockComplianceValidator.sol` and the Foundry tests validate the expected
   ordering and rollback locally; they are not evidence of Cleanverse behavior.
 - `npm run cleanverse:deploy` deploys only after an explicit mode and `--execute`, using the
@@ -152,7 +156,7 @@ Validator grant and benefit-pool registration are checkpointed separately from d
 script stores signatures or API credentials, and no stage is described as complete until public
 chain reads and receipts support it.
 
-Current test status: **11 application tests + 37 Foundry tests passing**.
+Current test status: **11 application tests + 48 Foundry tests passing**.
 
 ## Commerce boundary
 

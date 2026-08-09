@@ -51,9 +51,9 @@ A successful purchase produces both a merchant settlement receipt and a claim-su
 
 ## Build quality and demo
 
-- **37 Foundry tests** cover registration ordering, exact rule readback, redemption, wrong
+- **48 Foundry tests** cover registration ordering, exact rule readback, redemption, wrong
   merchant, duplicate use, expiry, revocation, failed CVI, refunds, token edge cases and
-  reentrancy.
+  reentrancy, including adversarial no-op/wrong rule mutations in the undeployed fallback.
 - **11 application tests** cover policy evidence, abstention, quote changes/expiry, exact-total
   approval, checkout idempotency and claim-pack generation.
 - Guarded deployment scripts require explicit modes, encrypted external keystores, simulation,

@@ -25,27 +25,40 @@ This audit covers the current local sandbox workflow and the Cleanverse integrat
 | Vendor-neutral benefit vault | Fixed parties, amount, expiry, lifecycle, registration-bound activation, fail-closed compliance and exact token deltas | 24 focused Foundry tests |
 | Cleanverse compliance adapter | Immutable mapping to validator `isRegistered`, `getRulesV2` and `complianceVerify` with restrictive readiness | 6 focused Foundry tests |
 | Factory integration | Owner-only atomic registration, restrictive-rule/readback checks and vault callback | 7 focused Foundry tests |
+| Vendor-gated single-contract fallback | API-owner surface, exact registration sync, atomic association coordinator and exact add/remove rule transitions; undeployed | 11 focused Foundry tests |
 | Adversarial token handling | No-return accepted with exact deltas; false, malformed and reentrant transfers roll back | Foundry tests |
 | Staged UAT preflight | Asserts foundation, grant, registration, funding and active-state wiring without mutations | Script rejects `--execute` |
 | Guarded UAT deployment | Verifies chain, signer, gas, bytecode and constructor wiring for foundation/vault modes | Requires explicit mode + `--execute` |
 | Redacted UAT evidence schema | Defines public transaction/state evidence without credentials, signatures, PII or raw responses | Documentation |
 
-## Cleanverse go/no-go gates still required
+## Cleanverse UAT gates
 
-These remain separate from the local commerce sandbox and require Cleanverse deployment
-artifacts, UAT access, and on-chain evidence:
+Verified independently from the local commerce sandbox:
 
-1. **Validator authorization:** submit the documented Factory-owner grant once using disposable
-   UAT ownership, then prove the deployed Factory holds `REGISTER_ROLE`.
-2. **Pool registration:** prove the Factory's documented `registerV2(vault, rule)` then
+1. **CVA issuance:** a project-controlled one-base-unit mint emitted the expected zero-address
+   `Transfer`; current total supply and recipient balance agree.
+2. **CVI subjects:** traveller and merchant have active tier-50 A-Passes and verification code 4.
+3. **Validator authorization:** the deployed Factory holds `REGISTER_ROLE` after a successful
+   public grant transaction.
+4. **Foundation deployment:** adapter, Factory and candidate vault bytecode and immutable wiring
+   are readable on Monad UAT.
+
+These gates still require successful UAT evidence:
+
+1. **Pool registration:** prove the Factory's documented `registerV2(vault, rule)` then
    `registerApass(vault, cva, address(0))` sequence on UAT and identify the separate policy deployment.
-3. **Rule replacement:** remove or replace the unrestricted rule before claiming restrictive
+2. **Rule replacement:** remove or replace the unrestricted rule before claiming restrictive
    compliance behavior.
-4. **Settlement proof:** deploy and test the Recovery Benefit Vault for funding, redemption,
+3. **Settlement proof:** deploy and test the Recovery Benefit Vault for funding, redemption,
    expiry, revocation, refund, replay and failed-CVI paths.
-5. **CVA behavior:** prove mint, vault-to-merchant and refund-recipient transfer-hook behavior
+4. **CVA behavior:** prove vault-to-merchant and refund-recipient transfer-hook behavior
    with the selected issued CVA.
-6. **Evidence:** retain only redacted transaction and audit evidence in the repository.
+5. **Evidence:** retain only redacted transaction and audit evidence in the repository.
+
+The supplied validator implementation currently lacks the guide's `registerV2` selector. The
+registration simulation reverted before broadcast, so the remaining gates are explicitly blocked
+rather than silently treated as complete. The single-contract fallback is locally tested only and
+remains vendor-confirmation-gated, undeployed and unfunded.
 
 The application has no external commerce-provider mode and does not silently present its local
 sandbox transaction as a production payment or Cleanverse settlement.

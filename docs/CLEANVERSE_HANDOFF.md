@@ -410,3 +410,22 @@ No architecture choice is made by this documentation update. These findings are 
 - This clears the public evidence gap for a project-controlled standard-CVA issuance event. It does
   not clear vault registration, CVA pool association, restrictive rule enforcement, funding,
   activation or settlement; those remain explicitly unclaimed.
+
+### 2026-08-09 — Vendor-gated single-contract fallback hardened locally
+
+- Sources: the local fallback contracts and Foundry suites, plus independent advisor review on
+  2026-08-09. Confidence is high for local EVM behavior and zero for live fallback compatibility
+  until Cleanverse confirms the deployed validator's API registration and association semantics.
+- Added an undeployed `SingleContractRecoveryBenefitVault` that exposes the ownership surface
+  expected by API registration, binds its compliance gate and association authority to the same
+  validator, and synchronizes registration only after exact readback of one restrictive RuleV2.
+- Added a concrete association coordinator that validates the pool/CVA/validator bindings, calls
+  `registerApass` and performs the vault callback atomically. The vault refuses an EOA association
+  authority. A successful production association remains vendor-trusted because the supplied
+  validator exposes no authoritative association getter; a real CVA transfer is still required.
+- Rule add/remove wrappers now compare complete before-and-after transitions. Adversarial mock
+  behavior proves that no-op and wrong mutations revert and roll back. Failed `registerApass`
+  likewise leaves association unconfirmed.
+- Foundry result: 48 tests pass. Advisor verdict after revision: **APPROVE for local-only commit**.
+  Decision: do not deploy, authorize or fund this fallback until Cleanverse confirms
+  `/validator/register`, association-only `registerApass`, and the coordinator's required role.
