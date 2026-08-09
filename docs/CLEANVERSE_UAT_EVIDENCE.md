@@ -54,7 +54,7 @@ institutional settlement claim.
 | Cleanverse validator proxy | `0xaC7e5179C2C7f03f209136886c172eb34F161792` |
 | Validator implementation | `0x68ce853d660444ffd98d6d5d98ac8ad58241d5a9` |
 | Validator implementation code hash | `0xd5c90e870c31cf2defda286452cef39f19df9e3086b1d8ea44832147e01501d6` |
-| ReliefCart standard CVA | `0x43ad32d181b0b673cb782d8e379b3dfff4dacfdc`; 6 decimals; total supply 1 |
+| ReliefCart standard CVA | `0x43ad32d181b0b673cb782d8e379b3dfff4dacfdc`; 6 decimals; original issuance 1; current supply 3 after two disposable fixture units |
 | ReliefCart compliance gate | `0xe39ad59a7c81a7119738624e5dcd1627e0950e4a` |
 | ReliefCart Recovery Factory | `0xc987d9f3d66bf0810d74417ce0b4f3341ddc885b` |
 | Registered Recovery Benefit Vault | `0x0e3b4d76e22d044d62e2f6cc2de1dca6203f153c` |
@@ -100,8 +100,13 @@ vaults. Failed transactions are retained as public Monad receipts with status `0
 revocation and refund transactions are status `1`. The fixtures were recovered after each case,
 so neither disposable vault retains CVA.
 
+The negative pass temporarily granted `MINTER_ROLE`, minted exactly two additional CVA units to
+fund the two fresh fixtures, and revoked the role in the same guarded sequence. The original
+one-unit issuance and settlement remain unchanged; the current total supply is `3`.
+
 | Case | Public evidence | Result |
 |---|---|---|
+| Disposable fixture funding | [grant `0xdf391f…3449`](https://testnet.monadexplorer.com/tx/0xdf391f0658011767e007382e56c043c97b5847f78a5481300f63f6c4c9133449) → [mint `0x2cfcb3…d470`](https://testnet.monadexplorer.com/tx/0x2cfcb3762b87cbd0fafbaf35d31d47fd5deefe61dd49c86f4c4014fb0518d470) → [revoke `0x7f3b6e…9876`](https://testnet.monadexplorer.com/tx/0x7f3b6e5d78150b09969f7981f100cf2bf0a7dd8c940c75a900a6475ee5539876) | Status `1` for all three; exactly two units were minted for the disposable fixtures and the minter role was removed |
 | CVA transfer-hook rejection | [failed transfer receipt `0x645369…b05e`](https://testnet.monadexplorer.com/tx/0x645369564ef12ecfbc8cfd93e0c054f984faede491fd4d43f8419332d779b05e) | Status `0`; transfer to a recipient without an active A-Pass was rejected |
 | Replay protection | [failed redemption receipt `0xaf2dc8…1e2b`](https://testnet.monadexplorer.com/tx/0xaf2dc864c56b7606860911a3c06720112d7a91c85d0f06a47c80877f26fa1e2b) | Status `0`; a second redemption against the already-`Redeemed` success vault was rejected |
 | Wrong merchant | [failed redemption receipt `0x3361ce…70f3`](https://testnet.monadexplorer.com/tx/0x3361ce0b17d3460b36b71e2253c91f1c4cbf8a138d84ec4e40b4c76e132370f3) | Status `0`; the wrong-merchant redemption was rejected for fixture `0xe43e73cd5e1ee55ea1839df9b0d89a9a5e7df089` |
