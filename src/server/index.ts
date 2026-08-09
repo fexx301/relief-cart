@@ -231,6 +231,7 @@ document.getElementById('decline').onclick = () => decide('decline');
 app.use((req, res, next) => {
   if (req.method !== "GET" && req.method !== "HEAD") return next();
   if (req.path.startsWith("/api") || req.path.startsWith("/mock-pay")) return next();
+  if (req.path === "/docs" || req.path.startsWith("/docs/")) return res.status(404).send("Not found");
   res.sendFile(path.join(root, "public/index.html"));
 });
 
