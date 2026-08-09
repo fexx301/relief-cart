@@ -84,7 +84,7 @@ export function createSandboxCommerceClient(): CommerceClient {
       const sessionId = `pay_${nanoid(10)}`;
       const session: PaymentSession = {
         sessionId,
-        paymentUrl: `http://127.0.0.1:${process.env.PORT ?? 4040}/mock-pay/${sessionId}`,
+        paymentUrl: `/mock-pay/${sessionId}`,
         status: "pending",
         totalAmount: input.totalAmount,
         currency: input.currency,

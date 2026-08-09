@@ -14,10 +14,6 @@ export function getCaseByPaymentSession(sessionId: string): ReliefCase | undefin
   return [...cases.values()].find((item) => item.payment?.sessionId === sessionId);
 }
 
-export function listCases(): ReliefCase[] {
-  return [...cases.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-}
-
 export function createCase(input: {
   rawIncidentText: string;
   needs: TravelerNeeds;

@@ -38,6 +38,7 @@ describe("ReliefCart transaction workflow", () => {
     await quoteCase(reliefCase, commerce);
     await startPayment(reliefCase, commerce);
     const firstSessionId = reliefCase.payment?.sessionId;
+    assert.equal(reliefCase.payment?.paymentUrl, `/mock-pay/${firstSessionId}`);
     await startPayment(reliefCase, commerce);
     assert.equal(reliefCase.payment?.sessionId, firstSessionId);
 

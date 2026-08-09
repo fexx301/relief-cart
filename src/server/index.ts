@@ -10,7 +10,6 @@ import {
   declineMockPayment,
   getCase,
   getCaseByPaymentSession,
-  listCases,
   quoteCase,
   refreshPayment,
   startPayment,
@@ -54,10 +53,6 @@ app.get("/api/airlines", (_req, res) => {
 app.get("/api/demo/incident", (_req, res) => {
   const text = readFileSync(path.join(root, "src/data/demo-incident.txt"), "utf8");
   res.json({ text });
-});
-
-app.get("/api/cases", (_req, res) => {
-  res.json({ cases: listCases() });
 });
 
 app.get("/api/cases/:id", (req, res) => {
