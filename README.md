@@ -92,7 +92,6 @@ src/
   server/index.ts      # API + static UI
   data/                # policies, catalog, demo PIR
 public/                # demo UI
-docs/DEMO_SCRIPT.md
 docs/CLEANVERSE_UAT_EVIDENCE.md
 docs/CLEANVERSE_UAT_EVIDENCE_TEMPLATE.md
 ```
