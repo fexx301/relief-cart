@@ -136,8 +136,9 @@ contract RecoveryBenefitFactoryTest {
             allowedSubGroup: bytes2("BV"),
             minTier: 30,
             minSubTier: 7,
+            isBlackList: false,
             // API-calculated country bitmaps are deployment data; this is only a bounded nonzero fixture.
-            poolCountryBitmap: 1 << 8
+            countryBitmap: 1 << 8
         });
     }
 

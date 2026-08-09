@@ -22,7 +22,8 @@ const rule = {
   allowedSubGroup: bytes2("CLEANVERSE_RULE_ALLOWED_SUB_GROUP"),
   minTier: uint8("CLEANVERSE_RULE_MIN_TIER"),
   minSubTier: uint8("CLEANVERSE_RULE_MIN_SUB_TIER"),
-  poolCountryBitmap: uint("CLEANVERSE_RULE_COUNTRY_BITMAP"),
+  isBlackList: boolean("CLEANVERSE_RULE_IS_BLACK_LIST"),
+  countryBitmap: uint("CLEANVERSE_RULE_COUNTRY_BITMAP"),
 };
 
 await Promise.all([access(keystore), access(passwordFile)]);
@@ -55,6 +56,12 @@ function uint8(name) {
   const value = uint(name);
   if (value > 255n) throw new Error(`${name} exceeds uint8`);
   return value;
+}
+
+function boolean(name) {
+  const value = requiredEnv(name).toLowerCase();
+  if (value !== "true" && value !== "false") throw new Error(`${name} must be true or false`);
+  return value === "true";
 }
 
 function assert(condition, message) {
@@ -121,12 +128,13 @@ const unrestricted =
   rule.allowedSubGroup === "0x0000" &&
   rule.minTier === 0n &&
   rule.minSubTier === 0n &&
-  rule.poolCountryBitmap === 0n;
+  !rule.isBlackList &&
+  rule.countryBitmap === 0n;
 assert(!unrestricted, "Refusing to register an unrestricted RuleV2");
 
-const signature = "registerBenefitPool(address,address,address,(bytes2,bytes2,uint8,uint8,uint256))";
+const signature = "registerBenefitPool(address,address,address,(bytes2,bytes2,uint8,uint8,bool,uint256))";
 const feeAddress = "0x0000000000000000000000000000000000000000";
-const tuple = `(${rule.allowedGroup},${rule.allowedSubGroup},${rule.minTier},${rule.minSubTier},${rule.poolCountryBitmap})`;
+const tuple = `(${rule.allowedGroup},${rule.allowedSubGroup},${rule.minTier},${rule.minSubTier},${rule.isBlackList},${rule.countryBitmap})`;
 
 await cast("call", factory, signature, vault, cva, feeAddress, tuple, "--from", admin, "--rpc-url", rpcUrl);
 

@@ -73,10 +73,16 @@ registerV2(pool, restrictiveRule)
 registerApass(pool, cva, address(0))
 ```
 
-The supplied validator implementation does not expose the required `registerV2` selector
-`0xba62f533`. A mandatory `eth_call` simulation reached the implementation and reverted with empty
-data for both minimum tier 50 and tier 1. A direct pre-registration `registerApass` simulation
-reverted with `PoolNotRegistered()`.
+The initial preflight used an incomplete five-field RuleV2 ABI and therefore computed the wrong
+`registerV2` selector, `0xba62f533`. Cleanverse subsequently supplied the complete schema:
+`bytes2 allowedGroup`, `bytes2 allowedSubGroup`, `uint8 minTier`, `uint8 minSubTier`,
+`bool isBlackList`, `uint256 countryBitmap`. The corrected selector is `0x7b6c63cb`, and a
+read-only bytecode check confirms that selector is present in the validator implementation. The
+earlier revert is therefore not evidence that the deployed validator lacks Factory registration.
+
+The corrected six-field calldata still requires a fresh `eth_call` simulation and exact rule
+readback before any state mutation. A direct pre-registration `registerApass` simulation remains
+expected to fail until `registerV2` succeeds.
 
 No registration transaction was broadcast. No gas was spent on the incompatible call. The
 candidate vault remains unfunded and inactive.
@@ -92,7 +98,7 @@ approval, checkout idempotency and claim-pack evidence.
 ## Claims deliberately not made
 
 - No successful vault pool registration or CVA association
-- No restrictive RuleV2 rejection on the supplied UAT validator
+- No restrictive RuleV2 rejection has yet been proven on the supplied UAT validator
 - No UAT vault funding, activation, redemption, refund, or replay receipt
 - No automatic CVA transfer-hook settlement proof
 - No production, mainnet, or real-payment claim

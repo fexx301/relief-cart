@@ -9,7 +9,8 @@ interface IAPassComplianceValidator {
         bytes2 allowedSubGroup;
         uint8 minTier;
         uint8 minSubTier;
-        uint256 poolCountryBitmap;
+        bool isBlackList;
+        uint256 countryBitmap;
     }
 
     function registerV2(address poolAddress, RuleV2 calldata rule) external;

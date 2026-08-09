@@ -154,8 +154,8 @@ contract SingleContractRecoveryBenefitVault is RecoveryBenefitVault {
     }
 
     function _isUnrestricted(IAPassComplianceValidator.RuleV2 memory rule) internal pure returns (bool) {
-        return rule.allowedGroup == bytes2(0) && rule.allowedSubGroup == bytes2(0) && rule.minTier == 0
-            && rule.minSubTier == 0 && rule.poolCountryBitmap == 0;
+        return !rule.isBlackList && rule.allowedGroup == bytes2(0) && rule.allowedSubGroup == bytes2(0)
+            && rule.minTier == 0 && rule.minSubTier == 0 && rule.countryBitmap == 0;
     }
 
     function _sameRule(IAPassComplianceValidator.RuleV2 memory left, IAPassComplianceValidator.RuleV2 calldata right)
@@ -165,7 +165,7 @@ contract SingleContractRecoveryBenefitVault is RecoveryBenefitVault {
     {
         return left.allowedGroup == right.allowedGroup && left.allowedSubGroup == right.allowedSubGroup
             && left.minTier == right.minTier && left.minSubTier == right.minSubTier
-            && left.poolCountryBitmap == right.poolCountryBitmap;
+            && left.isBlackList == right.isBlackList && left.countryBitmap == right.countryBitmap;
     }
 
     function _sameMemoryRule(
@@ -174,12 +174,19 @@ contract SingleContractRecoveryBenefitVault is RecoveryBenefitVault {
     ) internal pure returns (bool) {
         return left.allowedGroup == right.allowedGroup && left.allowedSubGroup == right.allowedSubGroup
             && left.minTier == right.minTier && left.minSubTier == right.minSubTier
-            && left.poolCountryBitmap == right.poolCountryBitmap;
+            && left.isBlackList == right.isBlackList && left.countryBitmap == right.countryBitmap;
     }
 
     function _ruleHash(IAPassComplianceValidator.RuleV2 memory rule) internal pure returns (bytes32) {
         return keccak256(
-            abi.encode(rule.allowedGroup, rule.allowedSubGroup, rule.minTier, rule.minSubTier, rule.poolCountryBitmap)
+            abi.encode(
+                rule.allowedGroup,
+                rule.allowedSubGroup,
+                rule.minTier,
+                rule.minSubTier,
+                rule.isBlackList,
+                rule.countryBitmap
+            )
         );
     }
 }

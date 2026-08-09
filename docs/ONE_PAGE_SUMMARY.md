@@ -45,10 +45,11 @@ A successful purchase produces both a merchant settlement receipt and a claim-su
 4. **Factory authorization:** The deployed ReliefCart Factory received `REGISTER_ROLE`; the
    [grant receipt](https://testnet.monadexplorer.com/tx/0xa9d994f293b78181c16e42979cd3e1fb69875a758460845d3a966bca7051a568)
    and current `hasRole == true` are independently reproducible.
-5. **Fail-closed registration:** The official Factory flow requires `registerV2` then
-   `registerApass`. The supplied UAT implementation lacks the documented `registerV2` selector.
-   ReliefCart detected this in simulation and refused to broadcast. The candidate vault remains
-   unregistered, unfunded and inactive; no completed UAT settlement is claimed.
+5. **Corrected registration boundary:** The first preflight used an incomplete five-field RuleV2
+   ABI. Cleanverse has now supplied the complete six-field schema, and the corrected `registerV2`
+   selector is present in the validator implementation. ReliefCart is re-running the read-only
+   simulation before any registration gas is spent; the candidate vault remains unregistered,
+   unfunded and inactive until that proof passes.
 
 ## Build quality and demo
 

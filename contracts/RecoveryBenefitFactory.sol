@@ -63,7 +63,14 @@ contract RecoveryBenefitFactory {
         if (rules.length != 1 || !_sameRule(rules[0], rule)) revert RuleReadbackMismatch();
 
         bytes32 ruleHash = keccak256(
-            abi.encode(rule.allowedGroup, rule.allowedSubGroup, rule.minTier, rule.minSubTier, rule.poolCountryBitmap)
+            abi.encode(
+                rule.allowedGroup,
+                rule.allowedSubGroup,
+                rule.minTier,
+                rule.minSubTier,
+                rule.isBlackList,
+                rule.countryBitmap
+            )
         );
         IRegistrationAwarePool(pool).confirmRegistration(cva, ruleHash);
 
@@ -71,8 +78,8 @@ contract RecoveryBenefitFactory {
     }
 
     function _isUnrestricted(IAPassComplianceValidator.RuleV2 calldata rule) internal pure returns (bool) {
-        return rule.allowedGroup == bytes2(0) && rule.allowedSubGroup == bytes2(0) && rule.minTier == 0
-            && rule.minSubTier == 0 && rule.poolCountryBitmap == 0;
+        return !rule.isBlackList && rule.allowedGroup == bytes2(0) && rule.allowedSubGroup == bytes2(0)
+            && rule.minTier == 0 && rule.minSubTier == 0 && rule.countryBitmap == 0;
     }
 
     function _sameRule(IAPassComplianceValidator.RuleV2 memory left, IAPassComplianceValidator.RuleV2 calldata right)
@@ -82,6 +89,6 @@ contract RecoveryBenefitFactory {
     {
         return left.allowedGroup == right.allowedGroup && left.allowedSubGroup == right.allowedSubGroup
             && left.minTier == right.minTier && left.minSubTier == right.minSubTier
-            && left.poolCountryBitmap == right.poolCountryBitmap;
+            && left.isBlackList == right.isBlackList && left.countryBitmap == right.countryBitmap;
     }
 }

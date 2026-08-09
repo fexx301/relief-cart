@@ -212,13 +212,25 @@ contract SingleContractRecoveryBenefitVaultTest {
 
     function _rule(uint8 minTier) internal pure returns (IAPassComplianceValidator.RuleV2 memory) {
         return IAPassComplianceValidator.RuleV2({
-            allowedGroup: bytes2(0), allowedSubGroup: bytes2(0), minTier: minTier, minSubTier: 0, poolCountryBitmap: 0
+            allowedGroup: bytes2(0),
+            allowedSubGroup: bytes2(0),
+            minTier: minTier,
+            minSubTier: 0,
+            isBlackList: false,
+            countryBitmap: 0
         });
     }
 
     function _hash(IAPassComplianceValidator.RuleV2 memory rule) internal pure returns (bytes32) {
         return keccak256(
-            abi.encode(rule.allowedGroup, rule.allowedSubGroup, rule.minTier, rule.minSubTier, rule.poolCountryBitmap)
+            abi.encode(
+                rule.allowedGroup,
+                rule.allowedSubGroup,
+                rule.minTier,
+                rule.minSubTier,
+                rule.isBlackList,
+                rule.countryBitmap
+            )
         );
     }
 

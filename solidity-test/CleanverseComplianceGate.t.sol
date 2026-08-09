@@ -74,7 +74,12 @@ contract CleanverseComplianceGateTest {
 
     function _restrictiveRule() internal pure returns (IAPassComplianceValidator.RuleV2 memory) {
         return IAPassComplianceValidator.RuleV2({
-            allowedGroup: bytes2("RC"), allowedSubGroup: bytes2("BV"), minTier: 1, minSubTier: 0, poolCountryBitmap: 1
+            allowedGroup: bytes2("RC"),
+            allowedSubGroup: bytes2("BV"),
+            minTier: 1,
+            minSubTier: 0,
+            isBlackList: false,
+            countryBitmap: 1
         });
     }
 }

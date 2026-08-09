@@ -99,17 +99,22 @@ function decodeRulesV2(value) {
     throw new Error("getRulesV2 returned an unexpected ABI offset");
   }
   const length = Number(BigInt(`0x${words[1]}`));
-  if (!Number.isSafeInteger(length) || words.length !== 2 + length * 5) {
+  if (!Number.isSafeInteger(length) || words.length !== 2 + length * 6) {
     throw new Error("getRulesV2 returned an unexpected RuleV2 array length");
   }
   return Array.from({ length }, (_, index) => {
-    const start = 2 + index * 5;
+    const start = 2 + index * 6;
+    const isBlackListWord = BigInt(`0x${words[start + 4]}`);
+    if (isBlackListWord !== 0n && isBlackListWord !== 1n) {
+      throw new Error("getRulesV2 returned a non-boolean isBlackList field");
+    }
     const rule = {
       allowedGroup: `0x${words[start].slice(0, 4)}`,
       allowedSubGroup: `0x${words[start + 1].slice(0, 4)}`,
       minTier: BigInt(`0x${words[start + 2]}`),
       minSubTier: BigInt(`0x${words[start + 3]}`),
-      poolCountryBitmap: BigInt(`0x${words[start + 4]}`),
+      isBlackList: isBlackListWord === 1n,
+      countryBitmap: BigInt(`0x${words[start + 5]}`),
     };
     return {
       ...rule,
@@ -118,7 +123,8 @@ function decodeRulesV2(value) {
         rule.allowedSubGroup === "0x0000" &&
         rule.minTier === 0n &&
         rule.minSubTier === 0n &&
-        rule.poolCountryBitmap === 0n,
+        !rule.isBlackList &&
+        rule.countryBitmap === 0n,
     };
   });
 }
@@ -247,7 +253,8 @@ if (stageIndex >= 2) {
       rules[0].allowedSubGroup,
       rules[0].minTier,
       rules[0].minSubTier,
-      `0x${rules[0].poolCountryBitmap.toString(16)}`,
+      rules[0].isBlackList,
+      `0x${rules[0].countryBitmap.toString(16)}`,
     ].join(",")}`
   );
   console.log(`VAULT_RULES_SHA256=${await sha256(encodedRules)}`);

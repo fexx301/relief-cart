@@ -24,7 +24,7 @@ contract CleanverseComplianceGate is IComplianceGate {
 
         IAPassComplianceValidator.RuleV2 memory rule = rules[0];
         return rule.allowedGroup != bytes2(0) || rule.allowedSubGroup != bytes2(0) || rule.minTier != 0
-            || rule.minSubTier != 0 || rule.poolCountryBitmap != 0;
+            || rule.minSubTier != 0 || rule.isBlackList || rule.countryBitmap != 0;
     }
 
     function verifyBeneficiary(address pool, address account) external view returns (bool) {

@@ -119,10 +119,11 @@ The complete public record is in
 ### Fail-closed boundary
 
 The official Factory flow requires `registerV2` followed by `registerApass`. The supplied UAT
-validator implementation lacks the documented `registerV2` selector. ReliefCart detected that
-in the mandatory pre-broadcast simulation and refused to send the transaction. The candidate
-vault is therefore intentionally unregistered, unfunded and inactive; this repo does not claim
-UAT redemption or automatic transfer-hook settlement.
+validator was initially tested with an incomplete five-field RuleV2 ABI. Cleanverse has now
+provided the complete six-field schema, and the corrected `registerV2` selector is present in the
+validator implementation. ReliefCart is re-running the mandatory read-only simulation with the
+corrected encoding; no registration transaction has been sent. The candidate vault remains
+unregistered, unfunded and inactive until that simulation and all readbacks pass.
 
 ### Implementation and guardrails
 
