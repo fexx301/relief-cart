@@ -20,6 +20,10 @@ contract MockComplianceValidator is IAPassComplianceValidator {
     mapping(address => mapping(address => bool)) public compliant;
     bool public revertCompliance;
     bool public failApass;
+    bool public noOpAdd;
+    bool public wrongAdd;
+    bool public noOpRemove;
+    bool public wrongRemove;
 
     event MockRegistered(address indexed pool, address indexed aToken, address indexed fee);
     event MockRuleSet(address indexed pool, RuleV2 rule);
@@ -38,6 +42,13 @@ contract MockComplianceValidator is IAPassComplianceValidator {
 
     function setFailApass(bool value) external {
         failApass = value;
+    }
+
+    function setRuleMutationBehavior(bool noOpAdd_, bool wrongAdd_, bool noOpRemove_, bool wrongRemove_) external {
+        noOpAdd = noOpAdd_;
+        wrongAdd = wrongAdd_;
+        noOpRemove = noOpRemove_;
+        wrongRemove = wrongRemove_;
     }
 
     function registerV2(address poolAddress, RuleV2 calldata rule) external {
@@ -83,6 +94,14 @@ contract MockComplianceValidator is IAPassComplianceValidator {
     function addRuleV2FromContract(RuleV2 calldata rule) external {
         Registration storage record = registrations[msg.sender];
         if (!record.registered) revert UnknownPool();
+        if (noOpAdd) return;
+        if (wrongAdd) {
+            RuleV2 memory wrongRule = rule;
+            wrongRule.minTier = rule.minTier == type(uint8).max ? 1 : rule.minTier + 1;
+            record.rules.push(wrongRule);
+            emit MockRuleSet(msg.sender, wrongRule);
+            return;
+        }
         record.rules.push(rule);
         emit MockRuleSet(msg.sender, rule);
     }
@@ -90,9 +109,14 @@ contract MockComplianceValidator is IAPassComplianceValidator {
     function removeRuleV2FromContract(uint256 index) external {
         Registration storage record = registrations[msg.sender];
         if (!record.registered) revert UnknownPool();
+        if (noOpRemove) return;
         uint256 last = record.rules.length - 1;
         if (index != last) record.rules[index] = record.rules[last];
         record.rules.pop();
+        if (wrongRemove && record.rules.length > 0) {
+            uint8 minTier = record.rules[0].minTier;
+            record.rules[0].minTier = minTier == type(uint8).max ? 1 : minTier + 1;
+        }
     }
 
     function getRulesV2(address poolAddress) external view returns (RuleV2[] memory) {
