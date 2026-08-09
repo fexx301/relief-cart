@@ -36,17 +36,19 @@
       "rationale": "Neutral essential top suitable for business-casual."
     },
     {
-      "id": "prod_tee_black_l",
-      "variantId": "var_tee_black_l",
-      "title": "Essential Crew Tee — Black",
+      "id": "prod_crewneck_navy_l",
+      "variantId": "var_crewneck_navy_l",
+      "title": "Essential Crewneck — Navy",
       "merchant": "demo-essentials",
       "category": "clothing_essentials",
       "size": "L",
       "unitPrice": "38.00",
       "currency": "USD",
       "inStock": true,
-      "tags": ["meeting", "clothing", "tee"],
-      "rationale": "Single essential top for a client meeting while bag is delayed."
+      "tags": ["meeting", "clothing", "crewneck"],
+      "rationale": "Single essential layer for a client meeting while bag is delayed.",
+      "image": "/assets/crewneck.webp",
+      "imageAlt": "Navy crewneck top"
     },
     {
       "id": "prod_care_kit",
