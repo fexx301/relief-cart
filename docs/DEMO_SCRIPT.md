@@ -1,7 +1,7 @@
 # ReliefCart demo script
 
 Target length: 3–4 minutes. Keep the browser, public evidence manifest and terminal ready before
-recording.
+recording. The production demo is https://relief-cart.vercel.app; use synthetic data only.
 
 ## Setup
 
@@ -11,6 +11,9 @@ npm install
 npm run dev
 # open http://127.0.0.1:4040
 ```
+
+For the hosted recording, open `https://relief-cart.vercel.app` instead. The hosted app is the
+same sandbox flow and does not use real payment execution.
 
 Optional proof terminal:
 

@@ -3,6 +3,7 @@
 **Track:** RWA  
 **Deployed chain:** Monad UAT / testnet, chain ID `10143`  
 **Repository:** https://github.com/fexx301/relief-cart
+**Live demo:** https://relief-cart.vercel.app (synthetic data; sandbox-only commerce)
 
 ## Problem
 

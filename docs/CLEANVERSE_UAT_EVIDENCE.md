@@ -4,6 +4,19 @@ Captured from Monad UAT (chain ID `10143`) on 2026-08-08/09. This manifest conta
 contract state and transaction receipts only. It contains no API credentials, signatures,
 keystores, private keys, password files, seed phrases, or personal data.
 
+## Public demo deployment
+
+- **URL:** https://relief-cart.vercel.app
+- **Source commit:** `a8bdd53` (`fix(deploy): pin Vercel to Express framework`), deployed on 2026-08-09.
+- **Verified endpoints:** `GET /api/health`, `GET /api/demo/incident`, `POST /api/cases`,
+  `POST /api/cases/:id/quote`, `POST /api/cases/:id/pay`,
+  `POST /api/payments/:sessionId/mock-approve`, and `POST /api/cases/:id/checkout`.
+- **Smoke result:** synthetic create → quote → approval → checkout completed with a placed order;
+  a repeated checkout returned the same order. The payment URL was same-origin (`/mock-pay/:sessionId`).
+- **Confidence:** high for the hosted sandbox behavior observed on 2026-08-09; this is not Cleanverse
+  settlement evidence. The hosted commerce state is in-memory and single-demo oriented, and no real
+  payment or personal incident data should be used.
+
 ## Evidence status
 
 | Level | Meaning |

@@ -429,3 +429,17 @@ No architecture choice is made by this documentation update. These findings are 
 - Foundry result: 48 tests pass. Advisor verdict after revision: **APPROVE for local-only commit**.
   Decision: do not deploy, authorize or fund this fallback until Cleanverse confirms
   `/validator/register`, association-only `registerApass`, and the coordinator's required role.
+
+### 2026-08-09 — Public sandbox deployment verified
+
+- Source URL: [ReliefCart production demo](https://relief-cart.vercel.app) and [public repository](https://github.com/fexx301/relief-cart). Date: 2026-08-09. Confidence is high for the observed hosted application routes; this is not evidence of Cleanverse settlement.
+- The hosted Express app exposes `GET /api/health`, `GET /api/demo/incident`, `POST /api/cases`,
+  `POST /api/cases/:id/quote`, `POST /api/cases/:id/pay`,
+  `POST /api/payments/:sessionId/mock-approve`, and `POST /api/cases/:id/checkout`. The request
+  schema uses synthetic incident text plus `airlineHint` and bounded needs (`size`, `urgentNeed`,
+  `alreadyHas`, `personalCapUsd`, `nights`); responses are JSON case, quote, payment and checkout
+  records. The payment link is same-origin at `/mock-pay/:sessionId`.
+- A production smoke test completed create → quote → approval → checkout and repeated checkout
+  returned the same order. The deployment is sandbox-only, uses in-memory state, and does not alter
+  any Cleanverse contract or contain credentials, keys or PII. The Cleanverse UAT boundary remains
+  unchanged: the candidate vault is still unregistered, unfunded and inactive.

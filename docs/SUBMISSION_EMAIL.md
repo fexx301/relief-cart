@@ -18,7 +18,7 @@ Submission links:
 - Public repository: https://github.com/fexx301/relief-cart
 - Build-window commit history: https://github.com/fexx301/relief-cart/commits/main
 - Demo video: **[PASTE VIDEO URL]**
-- Live demo: **[PASTE LIVE URL OR WRITE “Local demo; setup in README”]**
+- Live demo: https://relief-cart.vercel.app
 - One-page summary: https://github.com/fexx301/relief-cart/blob/main/docs/ONE_PAGE_SUMMARY.md
 - UAT evidence: https://github.com/fexx301/relief-cart/blob/main/docs/CLEANVERSE_UAT_EVIDENCE.md
 

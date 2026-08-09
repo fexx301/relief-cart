@@ -2,6 +2,8 @@
 
 **Policy-aware lost-luggage recovery agent** for the [Cleanverse Build: Trusted Assets Hackathon](https://cleanverse.com/hackathon).
 
+**Production demo:** https://relief-cart.vercel.app — synthetic incident data and sandbox-only commerce.
+
 ```text
 Issuer launches + mints a Cleanverse CVA
         ↓
@@ -34,13 +36,13 @@ Start at the **Live compliance rail**. It links the public Monad UAT receipts fo
 CVA mint, merchant A-Pass, Factory authorization and deployed integration contracts. It also
 shows the fail-closed registration boundary without presenting it as a completed settlement.
 
-Then run the local purchase flow:
+Then run the purchase flow on the [production demo](https://relief-cart.vercel.app) or locally:
 
 1. Click **Load demo report**
 2. **Verify incident and build plan** → policy board + primary item + abstentions
 3. **Request sandbox quote** → tax/shipping/exact total
 4. **Create a sandbox approval session**
-5. Open the local sandbox approval page (or use the in-app demo approval)
+5. Open the sandbox approval page (or use the in-app demo approval)
 6. **Place approved order** → stable `order_id`
 7. Download or print the **claim-support packet**
 
@@ -162,8 +164,10 @@ Current test status: **11 application tests + 48 Foundry tests passing**.
 
 The current commerce layer is intentionally local and sandbox-only. It models exact-total
 approval, idempotency, quote expiry, payment status, and order replay without claiming an
-external commerce provider or persistent payment execution. Cleanverse issuance and settlement
-work is documented separately in `docs/CLEANVERSE_HANDOFF.md`.
+external commerce provider or persistent payment execution. The public Vercel demo uses the same
+synthetic in-memory state and should be treated as a short single-user demonstration; do not enter
+real or personal incident data. Cleanverse issuance and settlement work is documented separately in
+`docs/CLEANVERSE_HANDOFF.md`.
 
 ## Pre-existing vs hackathon
 
