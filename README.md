@@ -78,7 +78,8 @@ Language used in UI: **potentially reimbursable** — never “guaranteed covere
 - Duplicate payment / checkout requests → original session / order returned
 - Claim packet includes source links, uncertainty, exact total, and order ID
 
-See [docs/IMPLEMENTATION_AUDIT.md](docs/IMPLEMENTATION_AUDIT.md) for the requirement-by-requirement audit.
+See [docs/CLEANVERSE_UAT_EVIDENCE.md](docs/CLEANVERSE_UAT_EVIDENCE.md) for the public requirement
+and evidence boundary.
 
 ## Project layout
 
@@ -92,7 +93,6 @@ src/
   data/                # policies, catalog, demo PIR
 public/                # demo UI
 docs/DEMO_SCRIPT.md
-docs/CLEANVERSE_HANDOFF.md
 docs/CLEANVERSE_UAT_EVIDENCE.md
 docs/CLEANVERSE_UAT_EVIDENCE_TEMPLATE.md
 ```
@@ -167,7 +167,7 @@ approval, idempotency, quote expiry, payment status, and order replay without cl
 external commerce provider or persistent payment execution. The public Vercel demo uses the same
 synthetic in-memory state and should be treated as a short single-user demonstration; do not enter
 real or personal incident data. Cleanverse issuance and settlement work is documented separately in
-`docs/CLEANVERSE_HANDOFF.md`.
+`docs/CLEANVERSE_UAT_EVIDENCE.md`.
 
 ## Pre-existing vs hackathon
 

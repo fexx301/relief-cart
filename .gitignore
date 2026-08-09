@@ -7,3 +7,10 @@ dist/
 /out/
 /cache_forge/
 .vercel
+
+# Internal working notes stay local and are never committed to the public repo.
+/docs/CLEANVERSE_HANDOFF.md
+/docs/CLEANVERSE_SUPPORT_FOLLOWUP.md
+/docs/CLEANVERSE_BENEFIT_VAULT_SPEC.md
+/docs/IMPLEMENTATION_AUDIT.md
+/docs/SUBMISSION_EMAIL.md
