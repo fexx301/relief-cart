@@ -63,6 +63,8 @@ institutional settlement claim.
 | RuleV2 readback | `allowedGroup=0x0000`, `allowedSubGroup=0x0000`, `minTier=50`, `minSubTier=0`, `isBlackList=false`, `countryBitmap=0x0` |
 | Registration rule hash | `0x635e76c251944264c0362700fc0eb61a940c7cdc3dab32048bc73a0e851e06fa` |
 | Final vault status | `Redeemed` (`4`); vault CVA balance `0`; merchant CVA balance `1` |
+| Wrong-merchant/revocation fixture | `0xe43e73cd5e1ee55ea1839df9b0d89a9a5e7df089`; final status `Refunded` (`5`); vault CVA balance `0` |
+| Expiry fixture | `0x2fcf2263407dd0dde04f0d4d6e66d4ca02b7c705`; expiry `1786281714`; final status `Refunded` (`5`); vault CVA balance `0` |
 
 The funded and final checks use Cleanverse’s documented read-only endpoint
 `POST /atoken/is_paused` from [docs.cleanverse.com](https://docs.cleanverse.com); the observed
@@ -91,6 +93,28 @@ selector `0xd78aa9c1`. The implementation bytecode contains the corrected valida
 the exact six-field calldata simulated successfully, and the registration receipt above proves
 the resulting pool association and rule readback.
 
+## Additional negative UAT receipts
+
+A second, disposable UAT pass exercised the failure and recovery paths against fresh registered
+vaults. Failed transactions are retained as public Monad receipts with status `0`; successful
+revocation and refund transactions are status `1`. The fixtures were recovered after each case,
+so neither disposable vault retains CVA.
+
+| Case | Public evidence | Result |
+|---|---|---|
+| CVA transfer-hook rejection | [failed transfer receipt `0x645369…b05e`](https://testnet.monadexplorer.com/tx/0x645369564ef12ecfbc8cfd93e0c054f984faede491fd4d43f8419332d779b05e) | Status `0`; transfer to a recipient without an active A-Pass was rejected |
+| Replay protection | [failed redemption receipt `0xaf2dc8…1e2b`](https://testnet.monadexplorer.com/tx/0xaf2dc864c56b7606860911a3c06720112d7a91c85d0f06a47c80877f26fa1e2b) | Status `0`; a second redemption against the already-`Redeemed` success vault was rejected |
+| Wrong merchant | [failed redemption receipt `0x3361ce…70f3`](https://testnet.monadexplorer.com/tx/0x3361ce0b17d3460b36b71e2253c91f1c4cbf8a138d84ec4e40b4c76e132370f3) | Status `0`; the wrong-merchant redemption was rejected for fixture `0xe43e73cd5e1ee55ea1839df9b0d89a9a5e7df089` |
+| Revocation | [revocation receipt `0x8b6b3f…d7ab`](https://testnet.monadexplorer.com/tx/0x8b6b3f0846f854a7e798f95b71dd089b1d118191288d65f1f649884c4fc4d7ab) | Status `1`; fixture entered the revoked state |
+| Revoked redemption | [failed redemption receipt `0xed2c2b…0ed0`](https://testnet.monadexplorer.com/tx/0xed2c2bd8daf9924e0502beebf7895983f2bb24c64ae1e6b17fea3346eefe0ed0) | Status `0`; redemption after revocation was rejected |
+| Revocation refund | [refund receipt `0x8a6fe9…b4ba`](https://testnet.monadexplorer.com/tx/0x8a6fe9e52fad51e57c03ef1d49853b965e2fb3b252dc44a3048574b34213b4ba) | Status `1`; exactly one CVA unit was recovered and the fixture ended `Refunded` |
+| Expired redemption | [failed redemption receipt `0x91f706…da59`](https://testnet.monadexplorer.com/tx/0x91f70680fc05f56f4a0989eb44bd763ad16e3ca069b3e8b5a4fb68ebef72da59) | Status `0`; redemption after fixture expiry `1786281714` was rejected for fixture `0x2fcf2263407dd0dde04f0d4d6e66d4ca02b7c705` |
+| Expiry refund | [refund receipt `0xed0bf4…e896`](https://testnet.monadexplorer.com/tx/0xed0bf4c7c3aeb33315f0d1653d58b2909cfd10124963e6c06c6992e34951e896) | Status `1`; exactly one CVA unit was recovered and the fixture ended `Refunded` |
+
+The failed receipts prove the on-chain rejection boundary; local Foundry tests continue to cover
+the same branches with decoded revert assertions. The public transaction set does not claim
+mainnet behavior, real payments or an independent trace-level decode of the Cleanverse hook.
+
 ## Reproduce the final read-only check
 
 With the local UAT environment configured, these checks are non-mutating:
@@ -108,6 +132,9 @@ keystore. They do not print or persist API credentials, signatures or passwords:
 ```bash
 npm run cleanverse:activate -- --execute
 npm run cleanverse:redeem -- --execute
+# Creates fresh disposable UAT fixtures and publishes new negative receipts; do not rerun
+# against an existing evidence set unless a new evidence pass is intended.
+npm run cleanverse:negative -- --execute
 ```
 
 ## Locally tested
@@ -122,10 +149,9 @@ quote validity, approval, checkout idempotency and claim-pack evidence.
 
 - Monad UAT is the only deployed chain; no production or mainnet claim is made.
 - Commerce remains synthetic and sandbox-only; no real payment provider is claimed.
-- The successful redemption proves the live transfer path and exact token deltas. Separate UAT
-  receipts for wrong-merchant, expiry/revocation, replay and refund scenarios remain optional
-  follow-up evidence; those branches are covered by the local Foundry suite.
+- The successful redemption and the separate negative receipts prove the live UAT transfer,
+  rejection and recovery paths. A trace-level decode of the Cleanverse hook is not claimed.
 
 This boundary is intentional: the primary Cleanverse issuance → identity → registration →
-funding → activation → redemption slice is verified, while unsupported production and
-unperformed negative-case claims remain clearly labeled.
+funding → activation → redemption slice and its disposable negative-case evidence are verified,
+while unsupported production and real-payment claims remain clearly labeled.

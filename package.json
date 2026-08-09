@@ -18,7 +18,8 @@
     "cleanverse:apass:issue": "node --env-file=.env scripts/cleanverse-apass-issue.mjs",
     "cleanverse:register": "node --env-file=.env scripts/cleanverse-register.mjs",
     "cleanverse:activate": "node --env-file=.env scripts/cleanverse-activate.mjs",
-    "cleanverse:redeem": "node --env-file=.env scripts/cleanverse-redeem.mjs"
+    "cleanverse:redeem": "node --env-file=.env scripts/cleanverse-redeem.mjs",
+    "cleanverse:negative": "node --env-file=.env scripts/cleanverse-negative-uat.mjs"
   },
   "engines": {
     "node": ">=20"

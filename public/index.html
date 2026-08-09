@@ -130,18 +130,19 @@
 
           <article class="proof-card is-protected">
             <div class="proof-card-topline">
-              <span>CCP · settlement</span>
-              <strong>Redeemed</strong>
+              <span>CCP · settlement + guardrails</span>
+              <strong>Proven</strong>
             </div>
-            <h3>One vault, one settlement</h3>
-            <p>The corrected six-field RuleV2 registered the pool, funded one benefit, and redeemed one CVA to the verified merchant.</p>
-            <a href="https://testnet.monadexplorer.com/tx/0x2e09397e9bcd1468b9d4369301e5ea77e2389a4e4935158dcbdd2621c986db49" target="_blank" rel="noreferrer">Settlement receipt <span aria-hidden="true">↗</span></a>
+            <h3>One vault, bounded outcomes</h3>
+            <p>The corrected RuleV2 registered and settled one CVA; separate UAT receipts reject wrong-merchant, expired, revoked and replayed attempts, with refunds.</p>
+            <a href="https://github.com/fexx301/relief-cart/blob/main/docs/CLEANVERSE_UAT_EVIDENCE.md" target="_blank" rel="noreferrer">Settlement + negative evidence <span aria-hidden="true">↗</span></a>
           </article>
         </div>
 
         <p class="proof-footnote">
-          Pool registration, funding, activation and one-time redemption are verified on Monad UAT.
-          The commerce demo remains synthetic and sandbox-only; no production payment claim is made.
+          Pool registration, funding, activation, one-time redemption and separate negative/refund
+          receipts are verified on Monad UAT. The commerce demo remains synthetic and sandbox-only;
+          no production payment claim is made.
         </p>
       </section>
 

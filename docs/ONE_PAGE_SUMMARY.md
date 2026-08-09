@@ -55,6 +55,10 @@ A successful purchase produces both a merchant settlement receipt and a claim-su
    [activation](https://testnet.monadexplorer.com/tx/0x64376e1aff996abb2e0fe80ab53101b6f5ca385e02308a75f134d358fad87a8f) and
    [redemption](https://testnet.monadexplorer.com/tx/0x2e09397e9bcd1468b9d4369301e5ea77e2389a4e4935158dcbdd2621c986db49)
    receipts show exact one-unit movement and terminal `Redeemed` state.
+7. **Negative enforcement and recovery:** Separate UAT fixtures rejected wrong-merchant,
+   revoked, expired and replayed redemption attempts with status-0 receipts; revocation and
+   expiry refunds each recovered exactly one CVA unit. The complete receipt set is in the
+   [UAT evidence manifest](CLEANVERSE_UAT_EVIDENCE.md).
 
 ## Build quality and demo
 
@@ -66,7 +70,7 @@ A successful purchase produces both a merchant settlement receipt and a claim-su
 - Guarded deployment, registration, activation and redemption scripts require explicit execution,
   encrypted external keystores, simulation, receipt validation and staged read-only preflights.
 - The UI shows verified UAT receipts separately from local sandbox commerce and clearly labels the
-  remaining UAT-only boundary.
+  UAT-only boundary, including the separate negative-case receipts and refunds.
 
 ## Institutional and scalable path
 

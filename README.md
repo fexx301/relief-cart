@@ -34,8 +34,8 @@ npm test
 
 Start at the **Live compliance rail**. It links the public Monad UAT receipts for the ReliefCart
 CVA mint, participant A-Passes, Factory authorization, atomic pool registration, funding,
-activation and merchant redemption. It also shows the remaining UAT-only boundary without
-presenting it as a production payment rail.
+activation, merchant redemption and separate negative-case/refund receipts. It also shows the
+remaining UAT-only boundary without presenting it as a production payment rail.
 
 Then run the purchase flow on the [production demo](https://relief-cart.vercel.app) or locally:
 
@@ -115,6 +115,7 @@ one beneficiary, one merchant, one amount, one expiry and one terminal redemptio
 | Registered vault | [Deployment receipt](https://testnet.monadexplorer.com/tx/0xbcb2efdb7c9e3f9ee6c0ed07b8b55f54f1de5309fd44ecf704a14ee5e13d34a1) and constructor readback |
 | Atomic pool registration | [Registration receipt](https://testnet.monadexplorer.com/tx/0xee4056ea83875c9048490aed344803c811e8092bed1ca42ffef681b94dfa911a); corrected six-field RuleV2, CVA association and vault confirmation |
 | Funding, activation and redemption | [Funding](https://testnet.monadexplorer.com/tx/0x6f07e9c65fd17126d6a4fab7cdcca961a323a28d9c7a1e295c8ebfea14a4c4de) → [activation](https://testnet.monadexplorer.com/tx/0x64376e1aff996abb2e0fe80ab53101b6f5ca385e02308a75f134d358fad87a8f) → [merchant settlement](https://testnet.monadexplorer.com/tx/0x2e09397e9bcd1468b9d4369301e5ea77e2389a4e4935158dcbdd2621c986db49) |
+| Negative UAT and refund evidence | [wrong merchant](https://testnet.monadexplorer.com/tx/0x3361ce0b17d3460b36b71e2253c91f1c4cbf8a138d84ec4e40b4c76e132370f3), [replay](https://testnet.monadexplorer.com/tx/0xaf2dc864c56b7606860911a3c06720112d7a91c85d0f06a47c80877f26fa1e2b), [expired redemption](https://testnet.monadexplorer.com/tx/0x91f70680fc05f56f4a0989eb44bd763ad16e3ca069b3e8b5a4fb68ebef72da59), [revocation refund](https://testnet.monadexplorer.com/tx/0x8a6fe9e52fad51e57c03ef1d49853b965e2fb3b252dc44a3048574b34213b4ba) and [expiry refund](https://testnet.monadexplorer.com/tx/0xed0bf4c7c3aeb33315f0d1653d58b2909cfd10124963e6c06c6992e34951e896) |
 
 The complete public record is in
 [docs/CLEANVERSE_UAT_EVIDENCE.md](docs/CLEANVERSE_UAT_EVIDENCE.md).
@@ -150,6 +151,9 @@ The Solidity boundary is implemented and locally tested:
   proven.
 - `npm run cleanverse:activate -- --execute` and `npm run cleanverse:redeem -- --execute` guard,
   simulate, broadcast and receipt-check the two lifecycle transitions.
+- `npm run cleanverse:negative -- --execute` captures disposable UAT receipts for CVA hook
+  rejection, wrong merchant, revocation, expiry, replay and both refund paths. It is intentionally
+  stateful and should only be rerun when a fresh evidence set is wanted.
 
 Run the local checks with:
 
